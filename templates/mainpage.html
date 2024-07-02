@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJ 순위</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+        }
+  
+        .medal {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #FFD700;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            margin-right: 8px;
+        }
+        .medal.second {
+            background-color: #C0C0C0;
+        }
+        .medal.third {
+            background-color: #CD7F32;
+        }
+        .answer-card {
+            background-color: #F0F0F0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .answer-card .view-count {
+            text-align: right;
+            color: gray;
+            font-size: small;
+        }
+        .answer-card .question {
+            font-size: 20px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .answer-card .input-wrap {
+            display: flex;
+            gap: 8px;
+        }
+        .answer-card .input-wrap input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .answer-card .input-wrap button {
+            padding: 10px 20px; /* Adjust padding as needed */
+            font-size: 16px; /* Adjust font size as needed */
+            border: none;
+            cursor: pointer;
+            background-color: #909090;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .answer-card .input-wrap button:hover {
+            background-color: #555;
+            transform: scale(1.1);
+            transition: transform 0.2s ease; 
+        }
+        .fixed-button {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .fixed-button:hover {
+            background-color: #555;
+        }
+
+        .logo {
+            width: 35px;
+        }
+
+
+        .score {
+            font-weight: bold;
+            font-size: 24px; /* Adjust the font size as needed */
+            text-align: center;
+        }
+
+        .player {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player div {
+            display: flex;
+            align-items: center;
+        }
+
+        .player img {
+            margin-right: 8px; /* Adjust the spacing between the image and text as needed */
+        }
+        .middle-wrap {
+            position: fixed;
+            top: calc(10% + 33px);
+            left: 50%;
+            transform: translate(-50%);
+            width: 430px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            margin-top: 33px;
+        }
+        
+    </style>
+</head>
+<body class="font-sans bg-gray-100">
+    <div class="container mx-auto px-4 py-8 bg-white max-w-lg shadow-lg">
+        <div class="flex items-center justify-between mb-4 top-wrap">
+            <img src="../static/src/logo.png" alt="logo" class="w-16 h-16 logo">
+            <h2 class="text-xl font-semibold">박하연 <span class="text-sm font-semibold">님</span></h2>
+        </div>
+        <div class="text-center mb-8 middle-wrap">
+            <h3 class="text-xl font-bold score">AJ 순위</h3>
+            <div class="flex justify-around mt-4 player">
+                <div><img src="../static/src/medal-gold.png" alt="medal-gold"> 윤민성</div>
+                <div><img src="../static/src/medal-silver.png" alt="medal-silver"> 정소연</div>
+                <div><img src="../static/src/medal-bronze.png" alt="medal-bronze"> 박하연</div>
+            </div>
+        </div>
+        <div id="answer-cards" class="bottom-wrap"></div>
+        <button class="fixed-button" onclick="addAnswerCard()">작성</button>
+    </div>
+    <script>
+        const answerData = [
+            {
+                question: "아몬드가 죽으면?",
+                views: 320,
+                answer: "다이아몬드"
+            },
+            {
+                question: "왕이 넘어지면?",
+                views: 320,
+                answer: "킹콩"
+            },
+            {
+                question: "만약 이름이 긴 질문이라면 줄 길이가 어느정도 될까?",
+                views: 320,
+                answer: "답변 예시"
+            },
+            {
+                question: "아몬드가 죽으면?",
+                views: 320,
+                answer: "다이아몬드"
+            }
+        ];
+        function addAnswerCard() {
+            const container = document.getElementById('answer-cards');
+            answerData.forEach(data => {
+                const card = document.createElement('div');
+                card.className = 'answer-card';
+                card.innerHTML = `
+                    <div class="view-count">조회수: ${data.views}</div>
+                    <div class="question">${data.question}</div>
+                    <div class="input-wrap">
+                        <input type="text" placeholder="정답을 입력해주세요">
+                        <button>제출</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            addAnswerCard();
+        });
+        
+
+    </script>
+</body>
+</html>
