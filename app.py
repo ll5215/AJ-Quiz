@@ -29,6 +29,11 @@ def token_required(f):
 def index():
     return redirect(url_for('login'))
 
+@app.route('/mypage', methods=['GET', 'POST'])
+@token_required
+def mypage(current_user):
+    return render_template('mypage.html', username=current_user['username'])
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -59,8 +64,6 @@ def login():
         resp.set_cookie('access_token', token, httponly=True)
         return resp
     return render_template('login.html')
-
-
 
 
 @app.route('/main')

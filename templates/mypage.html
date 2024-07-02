@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My page</title>
+    <link rel="stylesheet" href="/static/css/mypage.css">
+</head>
+<body>
+    <div class="mypage-container">
+        <div class="mypage-wrap">
+            <div class="mypage-nav">
+                <img class="mypage-logo" src="/static/logo.png"/>
+                <div class="name-wrap">
+                    <span class="name">{{ username }}</span>
+                    <span>님</span>
+                </div>
+                <button class="btn-logout"><img class="btn-logout-icn" src="/static/logout.png" /></button>
+            </div>
+            <div class="card-container">
+                <div class="card-wrap">
+                    <div class="card-content-wrap">
+                        <div class="card-content-question-wrap">
+                            <span class="card-content-question">질문 </span>
+                            <div class="question">아몬드가 죽으면?</div>
+                        </div>
+                        <div class="card-content-answer-wrap">
+                            <span class="card-content-answer">정답</span>
+                            <div class="answer">다이아몬드</div>
+                        </div>
+                    </div>
+                    <div class="card-bottom">
+                        <div class="card-bottom-info">
+                            <div class="info-views">
+                            <span>조회수:</span>
+                            <span>320</span>
+                            </div>
+                            <div class="info-hearts">
+                                <img class="heart" src="/static/heart-filled.png" />
+                                <span>10</span>
+                            </div>
+                        </div>
+                        <div class="card-bottom-btn">
+                            <button class="edit">수정</button>
+                            <button class="delete">삭제</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
