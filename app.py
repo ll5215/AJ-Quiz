@@ -42,21 +42,26 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        data = request.get_json()
-        username = data['username']
-        password = data['password']
+        data = request.get_json()  # JSON 데이터 수신
+        username = data.get('username')
+        password = data.get('password')
         user = db.users.find_one({'username': username})
-        if user and check_password_hash(user['password'], password):
-            payload = {
-                'username': username,
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
-            }
-            token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-            resp = make_response(jsonify({'message': 'Login successful'}))
-            resp.set_cookie('access_token', token, httponly=True)
-            return resp
-        return jsonify({'message': 'Invalid credentials'}), 401
+        if not user:
+            return jsonify({'message': 'Invalid username'}), 401
+        if not check_password_hash(user['password'], password):
+            return jsonify({'message': 'Invalid password'}), 401
+        payload = {
+            'username': username,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        }
+        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        resp = make_response(jsonify({'message': 'Login successful'}))
+        resp.set_cookie('access_token', token, httponly=True)
+        return resp
     return render_template('login.html')
+
+
+
 
 @app.route('/main')
 @token_required
