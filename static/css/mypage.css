@@ -8,13 +8,19 @@
 }
 
 
-.mypage-wrap{
-    max-width: 430px;
+.mypage-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.mypage-wrap {
+    width: 430px; /* 고정된 너비를 설정합니다 */
     padding: 0px 31px;
     display: flex;
     flex-direction: column;
     gap: 36px;
-    margin-top: 20px;
 }
 
 .mypage-nav{
@@ -49,6 +55,7 @@
 
 .btn-logout:hover{
     background-color: #4A4A4A;
+    transition: 0.3s ease-in-out;
 }
 
 .btn-logout-icn{
@@ -146,4 +153,5 @@ card css
 
 .edit:hover, .delete:hover{
     background-color: #4A4A4A;
+    transition: 0.3s ease-in-out;
 }

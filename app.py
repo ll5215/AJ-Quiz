@@ -34,6 +34,11 @@ def index():
 def mypage(current_user):
     return render_template('mypage.html', username=current_user['username'])
 
+@app.route('/card-detail')
+@token_required
+def card_detail(current_user):
+    return render_template('card-detail.html', username=current_user['username'])
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
