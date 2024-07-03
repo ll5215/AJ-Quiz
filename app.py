@@ -114,10 +114,11 @@ def add_question(current_user):
 @app.route('/get-questions', methods=['GET'])
 @token_required
 def get_questions(current_user):
-    questions = list(db.questions.find({'user': current_user['username']}))
+    questions = list(db.questions.find())  # 모든 질문을 가져옴
     for question in questions:
-        question['_id'] = str(question['_id'])  # Convert ObjectId to string
+        question['_id'] = str(question['_id'])  # ObjectId를 문자열로 변환
     return jsonify({'success': True, 'questions': questions}), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)
