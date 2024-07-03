@@ -22,7 +22,7 @@
                 <br>
                 <img id="result-image" src="/static/wrong.png" alt="X" class="mx-auto">
                 <br>
-                <p class="text-lg font-semibold" id="answer">정답: </p>
+                <p class="text-lg font-semibold" id="correct-answer">정답: </p>
             </div>
             <div class="flex justify-between items-center">
                 <span class="text-gray-500 text-xs">작성자: {{ username }}</span>
@@ -54,11 +54,12 @@
             const params = new URLSearchParams(window.location.search);
             const question = params.get('question');
             const answer = params.get('answer');
+            const userAnswer = params.get('user_answer');
             const views = params.get('views');
             const correct = params.get('correct') === 'true';
 
             document.getElementById('question').textContent = question;
-            document.getElementById('answer').textContent = `정답: ${answer}`;
+            document.getElementById('correct-answer').textContent = `정답: ${answer}`;
             document.getElementById('view-count').textContent = `조회수: ${views}`;
             
             if (correct) {

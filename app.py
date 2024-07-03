@@ -11,6 +11,7 @@ app.config.from_pyfile('config.py')
 client = MongoClient(app.config['MONGO_URI'])
 db = client.aj
 SECRET_KEY = app.config['JWT_SECRET_KEY']
+
 def token_required(f):
     def wrap(*args, **kwargs):
         token = request.cookies.get('access_token')
@@ -24,17 +25,26 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     wrap.__name__ = f.__name__
     return wrap
+
 @app.route('/')
 def index():
     return redirect(url_for('login'))
+
 @app.route('/mypage', methods=['GET', 'POST'])
 @token_required
 def mypage(current_user):
     return render_template('mypage.html', username=current_user['username'])
+
 @app.route('/card-detail')
 @token_required
 def card_detail(current_user):
-    return render_template('card-detail.html', username=current_user['username'])
+    question = request.args.get('question')
+    answer = request.args.get('answer')
+    user_answer = request.args.get('user_answer')
+    views = request.args.get('views')
+    correct = request.args.get('correct') == 'true'
+    return render_template('card-detail.html', username=current_user['username'], question=question, answer=answer, user_answer=user_answer, views=views, correct=correct)
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -44,6 +54,7 @@ def register():
         db.users.insert_one({'username': username, 'password': hashed_password})
         return redirect(url_for('login'))
     return render_template('register.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -77,6 +88,7 @@ def login():
             logging.error(f"Login error: {e}")
             return jsonify({'message': f"Internal server error: {e}"}), 500
     return render_template('login.html')
+
 @app.route('/main')
 @token_required
 def main(current_user):
@@ -85,18 +97,14 @@ def main(current_user):
 @app.route('/add-question', methods=['POST'])
 @token_required
 def add_question(current_user):
-    Aj_list = list(db.questions.find({},{'_id':False}))
     data = request.get_json()
     question = data.get('question')
     answer = data.get('answer')
-    count = len(Aj_list)+1
-    print(count)
 
     if not question or not answer:
         return jsonify({'success': False, 'message': 'Missing question or answer'}), 400
 
     new_question = {
-        'count' : count,
         'question': question,
         'answer': answer,
         'views': 0,
