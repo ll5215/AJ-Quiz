@@ -239,13 +239,12 @@
         function deleteCard(id){ 
             $.ajax({
                     type: "POST",
-                    url: "/api/delete",
-                    contentType: "application/json",
-                    data: JSON.stringify({'id':id}),
+                    url: "/delete/questions",
+                    data: {question_give : question},
                     success: function (response) {
                         if (response['result'] == 'success') {
-                            $(`.card-wrap[data-id='${id}']`).remove();
-                            $('.deletemodal').removeClass('on');
+                            alert('삭제 완료!')
+                            console.log(response['result'])
                         } else {
                             alert('카드 삭제에 실패했습니다.')
                             }

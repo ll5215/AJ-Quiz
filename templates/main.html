@@ -34,7 +34,6 @@
         <!--모달 팝업-->
         <div class="modal">
             <div class="modal_popup w-auto">
-
                     <form id="questionForm">
                         <div class="mt-7 flex flex-col gap-2"></div>
                             <div class="input_section w-[320px] h-[304px] mb-9">
@@ -56,18 +55,15 @@
                                     등록
                                 </button>
                             </form>
-
-
-                    <button 
+                    <button
                         id="close_btn"
                         type="button"
                         class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center popup-close">
-                        <svg aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg aria-hidden="true" class="w-5 h-5" fill="#C6C7C7" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                         </svg>
                         <span class="sr-only">Close popup</span>
                     </button>
-
             </div>
         </div>
         <!--end 모달 팝업-->
@@ -75,12 +71,11 @@
             <section>
                 <button class="fixed-button">작성</button>
             </section>
-        </main>   
+        </main>
     </div>
     <script>
         let answerData = [];
         let userAnswers = [];
-
         function addAnswerCard() {
             const container = document.getElementById('answer-cards');
             container.innerHTML = ''; // Clear the container first
@@ -144,7 +139,6 @@
                 container.appendChild(card);
             });
         }
-
         function fetchQuestions() {
             fetch('/get-questions')
                 .then(response => response.json())
@@ -158,7 +152,6 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-
         function fetchUserAnswers() {
             fetch('/get-user-answers')
                 .then(response => response.json())
@@ -172,29 +165,22 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             fetchQuestions(); // Fetch questions on page load
-
             document.querySelector('.text-xl').textContent = `{{ username }}`;
-
             const modal = document.querySelector('.modal');
             const modalOpen = document.querySelector('.fixed-button');
             const modalClose = document.querySelector('#close_btn');
-
             modalOpen.addEventListener('click', function() {
                 modal.classList.add('on');
             });
-
             modalClose.addEventListener('click', function() {
                 modal.classList.remove('on');
             });
-
             document.getElementById('questionForm').addEventListener('submit', function(event) {
                 event.preventDefault();
                 const problem = document.querySelector('input[name="problem"]').value;
                 const answer = document.querySelector('input[name="answer"]').value;
-
                 fetch('/add-question', {
                     method: 'POST',
                     headers: {

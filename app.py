@@ -156,6 +156,14 @@ def get_user_answers(current_user):
         answer['question_id'] = str(answer['question_id'])  # ObjectId를 문자열로 변환
     return jsonify({'success': True, 'userAnswers': user_answers}), 200
 
+@app.route('/delete/questions', methods = ["POST"])
+@token_required
+def delete_questions():
+    question_receieve = request.form['question_give']
+    db.questions.delete_one({'question' : question_receieve})
+    
+    return jsonify({'result' : 'success'})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)
