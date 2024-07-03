@@ -20,7 +20,7 @@
             <div class="text-center mb-8">
                 <div class="middle-wrap">
                     <h3 class="text-xl font-bold score">AJ 순위</h3>
-                    <div class=" mt-4 player">
+                    <div class="mt-4 player">
                         <div class="rank"><img src="/static/medal-gold.png" alt="medal-gold">윤민성</div>
                         <div class="rank"><img src="/static/medal-silver.png" alt="medal-silver">정소연</div>
                         <div class="rank"><img src="/static/medal-bronze.png" alt="medal-bronze">박하연</div>
@@ -28,18 +28,16 @@
                 </div>
             </div>
             <div class="bottom-wrap">
-                <div id="answer-cards" class="card-list">
-                </div>
-
+                <div id="answer-cards" class="card-list"></div>
             </div>
         </div>
-    <!--모달 팝업-->
+        <!--모달 팝업-->
         <div class="modal">
             <div class="modal_popup">
                 <div class="modal_container w-[333px] h-[337px]">
                     <div class="p-5">
                         <div class="mt-7 flex flex-col gap-2"></div>
-                        <form class="w-full">
+                        <form id="questionForm" class="w-full">
                             <div class="input_section w-[320px] h-[304px] mb-9">
                                 <div class="question_section">
                                     <label>질문 작성</label>
@@ -64,16 +62,16 @@
                         </form>
                     </div>
                     <button 
-                            id="close_btn"
-                            type="button"
-                            class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center popup-close"><svg
-                                aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                cliprule="evenodd"></path>
-                        </svg>
-                        <span class="sr-only">Close popup</span>
+                        id="close_btn"
+                        type="button"
+                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center popup-close"><svg
+                            aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="sr-only">Close popup</span>
                     </button>
                 </div>
             </div>
@@ -81,36 +79,16 @@
         <!--end 모달 팝업-->
         <main>
             <section>
-                <button class="fixed-button" onclick="addAnswerCard()">작성</button>
+                <button class="fixed-button">작성</button>
             </section>
         </main>   
     </div>
     <script>
-        const answerData = [
-            {
-                question: "아몬드가 죽으면?",
-                views: 320,
-                answer: "다이아몬드"
-            },
-            {
-                question: "왕이 넘어지면?",
-                views: 320,
-                answer: "킹콩"
-            },
-            {
-                question: "만약 이름이 긴 질문이라면 줄 길이가 어느정도 될까?",
-                views: 320,
-                answer: "답변 예시"
-            },
-            {
-                question: "아몬드가 죽으면?",
-                views: 320,
-                answer: "다이아몬드"
-            }
-        ];
+        const answerData = [];
 
         function addAnswerCard() {
             const container = document.getElementById('answer-cards');
+            container.innerHTML = ''; // Clear the container first
             answerData.forEach(data => {
                 const card = document.createElement('div');
                 card.className = 'answer-card';
@@ -124,37 +102,77 @@
                         </div>
                     </div>
                 </div>`;
-                card.addEventListener('click', () => {
-                    window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&views=${data.views}`;
+                card.querySelector('button').addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const userAnswer = card.querySelector('input').value;
+                    if (userAnswer === data.answer) {
+                        card.querySelector('.input-wrap').innerHTML = `<img src="/static/signiture.png" alt="Signiture"><div class="question">${data.answer}</div>`;
+                        window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&views=${data.views}&correct=true`;
+                    } else {
+                        card.querySelector('.input-wrap').innerHTML = `<img src="/static/wrong.png" alt="Wrong"><div class="question">틀렸습니다</div>`;
+                        window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&views=${data.views}&correct=false`;
+                    }
                 });
                 container.appendChild(card);
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            addAnswerCard();
-        });
- // 로그인한 사용자의 이름
+        function fetchQuestions() {
+            fetch('/get-questions')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        answerData.push(...data.questions);
+                        addAnswerCard();
+                    } else {
+                        console.error('Failed to fetch questions');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
+            fetchQuestions(); // Fetch questions on page load
+
             document.querySelector('.text-xl').textContent = `{{ username }}`;
-        });
 
-        const modal = document.querySelector('.modal');
-        const modalOpen = document.querySelector('.fixed-button');
-        const modalClose = document.querySelector('#close_btn');
+            const modal = document.querySelector('.modal');
+            const modalOpen = document.querySelector('.fixed-button');
+            const modalClose = document.querySelector('#close_btn');
 
-        //열기 버튼을 눌렀을 때 모달팝업이 열림
-        modalOpen.addEventListener('click',function(){
-            //'on' class 추가
-            modal.classList.add('on');
-        });
-        //닫기 버튼을 눌렀을 때 모달팝업이 닫힘
-        modalClose.addEventListener('click',function(){
-            //'on' class 제거
-            modal.classList.remove('on');
-        });
+            modalOpen.addEventListener('click', function() {
+                modal.classList.add('on');
+            });
 
+            modalClose.addEventListener('click', function() {
+                modal.classList.remove('on');
+            });
+
+            document.getElementById('questionForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const problem = document.querySelector('input[name="problem"]').value;
+                const answer = document.querySelector('input[name="answer"]').value;
+
+                fetch('/add-question', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: problem, answer: answer })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        answerData.push(data.newQuestion);
+                        addAnswerCard();
+                        modal.classList.remove('on');
+                    } else {
+                        alert('Error adding question');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
     </script>
 </body>
 </html>

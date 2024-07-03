@@ -14,14 +14,13 @@
             <a href="{{ url_for('mypage') }}">
                 <h2 class="text-xl font-semibold">{{ username }} <span class="text-sm font-semibold">님</span></h2>
             </a>
-
         </div>
         <div class="bg-gray-100 p-4 rounded-lg mb-8 card-wrap">
             <span class="block text-right text-gray-500 text-xs" id="view-count">조회수: </span>
             <div class="text-center mb-4">
                 <h3 class="text-lg font-medium" id="question"></h3>
                 <br>
-                <img src="/static/wrong.png" alt="X" class="mx-auto">
+                <img id="result-image" src="/static/wrong.png" alt="X" class="mx-auto">
                 <br>
                 <p class="text-lg font-semibold" id="answer">정답: </p>
             </div>
@@ -56,10 +55,17 @@
             const question = params.get('question');
             const answer = params.get('answer');
             const views = params.get('views');
+            const correct = params.get('correct') === 'true';
 
             document.getElementById('question').textContent = question;
             document.getElementById('answer').textContent = `정답: ${answer}`;
             document.getElementById('view-count').textContent = `조회수: ${views}`;
+            
+            if (correct) {
+                document.getElementById('result-image').src = '/static/signiture.png';
+            } else {
+                document.getElementById('result-image').src = '/static/wrong.png';
+            }
         });
     </script>
 </body>
