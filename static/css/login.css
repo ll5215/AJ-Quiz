@@ -33,7 +33,7 @@
 }
 
 .input-wrap input {
-    width: 340px;
+    /* width: 340px; */
     padding: 14px 8px;
     border: 1px solid #222;
     border-radius: 6px;
@@ -81,14 +81,15 @@
 
 .modal_btn {
     display: block;
-    margin: 40px auto;
+    margin: 5px auto;
     padding: 10px 20px;
-    background-color: royalblue;
+    background-color: white;
     border: none;
     border-radius: 5px;
-    color: #fff;
+    color: black;
     cursor: pointer;
     transition: box-shadow 0.2s;
+    font-size : 14px;
 }
 
 .modal_btn:hover {
