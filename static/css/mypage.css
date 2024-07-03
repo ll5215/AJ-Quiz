@@ -32,10 +32,13 @@ body{
     display: flex;
     align-items: center;
     justify-content: space-between;
+
 }
 
 .mypage-logo{
     width: 35px;
+    height: 48.7px;
+    margin-top: 19px;
 }
 
 .name-wrap{
@@ -74,6 +77,7 @@ card css
     display: flex;
     flex-direction: column;
     gap: 24px;
+    height: 844px;
 }
 
 .card-wrap{
@@ -83,6 +87,9 @@ card css
     display: flex;
     flex-direction: column;
     gap: 39px;
+    width: 360px;
+    height: 193px;
+
 }
 
 .card-content-wrap{

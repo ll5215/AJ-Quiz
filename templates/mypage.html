@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>My page</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/mypage.css">
 </head>
@@ -92,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mypage-nav">
+            <div class="mypage-nav flex flex-row justify-left">
                 <a href="{{ url_for('main') }}"><img class="mypage-logo" src="/static/logo.png"/></a>
                 <div class="name-wrap">
                     <span class="name">{{ username }}</span>
