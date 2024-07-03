@@ -3,11 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <title>My page</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/mypage.css">
 </head>
 <body>
     <div class="mypage-container">
         <div class="mypage-wrap">
+            <div class="modal">
+                <div class="modal_popup">
+                    <div class="modal_container w-[333px] h-[337px]">
+                        <div class="p-5">
+                            <div class="mt-7 flex flex-col gap-2"></div>
+                            <form class="w-full">
+                                <div class="input_section w-[320px] h-[304px] mb-9">
+                                    <div class="edit_section">
+                                        <label>질문 수정</label>
+                                        <input name="edit" type="text" required=""
+                                        class="block w-[320px] w-full rounded-lg border border-gray-300 px-3 py-10 shadow-sm outline-none placeholder-top text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
+                                        placeholder="" value="">
+                                    </div>
+                                    <div class="answer_section">
+                                        <label>정답</label>
+                                        <input name="answer" type="text" required=""
+                                            class="mt-2 w-[320px] block w-full rounded-lg border border-gray-300 px-3 py-4 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
+                                            placeholder="" value="">
+                                    </div>
+                                </div>
+                                <p class="mb-3 mt-2 text-sm text-gray-500"></p>
+                                <div class="submit_btn">
+                                    <button type="submit"
+                                            class="inline-flex w-full items-center justify-center rounded-lg bg- bg-indigo-500 p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
+                                        수정
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <button 
+                                id="close_btn"
+                                type="button"
+                                class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center popup-close"><svg
+                                    aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                    cliprule="evenodd"></path>
+                            </svg>
+                            <span class="sr-only">Close popup</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        
             <div class="mypage-nav">
                 <a href="{{ url_for('main') }}"><img class="mypage-logo" src="/static/logo.png"/></a>
             
@@ -50,5 +96,21 @@
             </div>
         </div>
     </div>
+    <script>
+        const modal = document.querySelector('.modal');
+        const modalOpen = document.querySelector('.edit');
+        const modalClose = document.querySelector('#close_btn');
+
+        //열기 버튼을 눌렀을 때 모달팝업이 열림
+        modalOpen.addEventListener('click',function(){
+            //'on' class 추가
+            modal.classList.add('on');
+        });
+        //닫기 버튼을 눌렀을 때 모달팝업이 닫힘
+        modalClose.addEventListener('click',function(){
+            //'on' class 제거
+            modal.classList.remove('on');
+        });
+    </script>
 </body>
 </html>
