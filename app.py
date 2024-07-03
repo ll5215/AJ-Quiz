@@ -11,6 +11,7 @@ app.config.from_pyfile('config.py')
 client = MongoClient(app.config['MONGO_URI'])
 db = client.aj
 SECRET_KEY = app.config['JWT_SECRET_KEY']
+
 def token_required(f):
     def wrap(*args, **kwargs):
         token = request.cookies.get('access_token')
@@ -24,17 +25,21 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     wrap.__name__ = f.__name__
     return wrap
+
 @app.route('/')
 def index():
     return redirect(url_for('login'))
+
 @app.route('/mypage', methods=['GET', 'POST'])
 @token_required
 def mypage(current_user):
     return render_template('mypage.html', username=current_user['username'])
+
 @app.route('/card-detail')
 @token_required
 def card_detail(current_user):
     return render_template('card-detail.html', username=current_user['username'])
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -44,27 +49,41 @@ def register():
         db.users.insert_one({'username': username, 'password': hashed_password})
         return redirect(url_for('login'))
     return render_template('register.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        data = request.get_json()  # JSON 데이터 수신
-        username = data.get('username')
-        password = data.get('password')
-        user = db.users.find_one({'username': username})
-        if not user:
-            return jsonify({'message': 'Invalid username'}), 401
-        if not check_password_hash(user['password'], password):
-            return jsonify({'message': 'Invalid password'}), 401
-        payload = {
-            'username': username,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
-        }
-        logging.info(payload)
-        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-        resp = make_response(jsonify({'message': 'Login successful'}))
-        resp.set_cookie('access_token', token, httponly=True)
-        return resp
+        try:
+            data = request.get_json()
+            if data is None:
+                return jsonify({'message': 'No input data provided'}), 400
+            username = data.get('username')
+            password = data.get('password')
+            if not username or not password:
+                return jsonify({'message': 'Username and password are required'}), 400
+
+            logging.info(f"Attempting login for username: {username}")  # 로그 추가
+            user = db.users.find_one({'username': username})
+            if not user:
+                logging.warning(f"Invalid username: {username}")  # 로그 추가
+                return jsonify({'message': 'Invalid username'}), 401
+            if not check_password_hash(user['password'], password):
+                logging.warning(f"Invalid password for username: {username}")  # 로그 추가
+                return jsonify({'message': 'Invalid password'}), 401
+            payload = {
+                'username': username,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
+            }
+            logging.info(f"Payload: {payload}")  # 로그 추가
+            token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+            resp = make_response(jsonify({'message': 'Login successful'}))
+            resp.set_cookie('access_token', token, httponly=True)
+            return resp
+        except Exception as e:
+            logging.error(f"Login error: {e}")  # 로그 추가
+            return jsonify({'message': f"Internal server error: {e}"}), 500
     return render_template('login.html')
+
 @app.route('/main')
 @token_required
 def main(current_user):
