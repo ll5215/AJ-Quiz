@@ -77,6 +77,7 @@
     <script>
         let answerData = [];
         let userAnswers = [];
+
         function addAnswerCard() {
             const container = document.getElementById('answer-cards');
             container.innerHTML = ''; // Clear the container first
@@ -92,7 +93,7 @@
                             <div class="question">${data.question}</div>
                             <div class="input-wrap">
                                 <img src="/static/${correct ? 'signiture.png' : 'wrong.png'}" alt="${correct ? 'Signiture' : 'Wrong'}">
-                                <a href="/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&user_answer=${encodeURIComponent(userAnswer.answer)}&views=${data.views}&correct=${correct}">
+                                <a href="/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&user_answer=${encodeURIComponent(userAnswer.answer)}&views=${data.views}&correct=${correct}&question_id=${data._id}">
                                     <button>답변 확인하러가기</button></a>
                             </div>
                         </div>
@@ -127,7 +128,7 @@
                             if (result.success) {
                                 const correct = userAnswer === data.answer;
                                 card.querySelector('.input-wrap').innerHTML = `<img src="/static/${correct ? 'signiture.png' : 'wrong.png'}" alt="${correct ? 'Signiture' : 'Wrong'}"><div class="question">${data.answer}</div>`;
-                                window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&user_answer=${encodeURIComponent(userAnswer)}&views=${data.views}&correct=${correct}`;
+                                window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&user_answer=${encodeURIComponent(userAnswer)}&views=${data.views}&correct=${correct}&question_id=${data._id}`;
                             } else {
                                 console.error('Failed to submit answer');
                             }
@@ -138,6 +139,7 @@
                 container.appendChild(card);
             });
         }
+
         function fetchQuestions() {
             fetch('/get-questions')
                 .then(response => response.json())
@@ -151,6 +153,7 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
+
         function fetchUserAnswers() {
             fetch('/get-user-answers')
                 .then(response => response.json())
@@ -164,22 +167,29 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
+
         document.addEventListener('DOMContentLoaded', () => {
             fetchQuestions(); // Fetch questions on page load
+
             document.querySelector('.text-xl').textContent = `{{ username }}`;
+
             const modal = document.querySelector('.modal');
             const modalOpen = document.querySelector('.fixed-button');
             const modalClose = document.querySelector('#close_btn');
+
             modalOpen.addEventListener('click', function() {
                 modal.classList.add('on');
             });
+
             modalClose.addEventListener('click', function() {
                 modal.classList.remove('on');
             });
+
             document.getElementById('questionForm').addEventListener('submit', function(event) {
                 event.preventDefault();
                 const problem = document.querySelector('input[name="problem"]').value;
                 const answer = document.querySelector('input[name="answer"]').value;
+
                 fetch('/add-question', {
                     method: 'POST',
                     headers: {

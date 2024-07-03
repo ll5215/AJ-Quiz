@@ -43,7 +43,8 @@ def card_detail(current_user):
     user_answer = request.args.get('user_answer')
     views = request.args.get('views')
     correct = request.args.get('correct') == 'true'
-    return render_template('card-detail.html', username=current_user['username'], question=question, answer=answer, user_answer=user_answer, views=views, correct=correct)
+    question_id = request.args.get('question_id')
+    return render_template('card-detail.html', username=current_user['username'], question=question, answer=answer, user_answer=user_answer, views=views, correct=correct, question_id=question_id)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -164,7 +165,7 @@ def get_user_answers(current_user):
         answer['question_id'] = str(answer['question_id'])  # ObjectId를 문자열로 변환
     return jsonify({'success': True, 'userAnswers': user_answers}), 200
 
-@app.route('/delete/questions', methods = ["POST"])
+@app.route('/delete/questions', methods=['POST'])
 @token_required
 def delete_questions():
     question_receieve = request.form['question_give']
@@ -184,6 +185,15 @@ def edit_questions():
         return jsonify({'result':'success'})
     else:
         return jsonify({'result':'failure'})
+
+@app.route('/get-answers/<question_id>', methods=['GET'])
+@token_required
+def get_answers(current_user, question_id):
+    answers = list(db.answers.find({'question_id': ObjectId(question_id)}))
+    for answer in answers:
+        answer['_id'] = str(answer['_id'])  # ObjectId를 문자열로 변환
+        answer['question_id'] = str(answer['question_id'])  # ObjectId를 문자열로 변환
+    return jsonify({'success': True, 'answers': answers}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)

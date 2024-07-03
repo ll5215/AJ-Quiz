@@ -32,3 +32,9 @@ body{
 .heart{
     width: 16px;
 }
+
+.answers-wrap{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
