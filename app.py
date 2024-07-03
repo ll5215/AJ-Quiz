@@ -3,12 +3,14 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 import jwt
+import logging
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
 client = MongoClient(app.config['MONGO_URI'])
-db = client.user_database
+db = client.aj
 SECRET_KEY = app.config['JWT_SECRET_KEY']
 
 def token_required(f):
@@ -64,6 +66,7 @@ def login():
             'username': username,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
         }
+        logging.info(payload)
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         resp = make_response(jsonify({'message': 'Login successful'}))
         resp.set_cookie('access_token', token, httponly=True)
@@ -75,5 +78,35 @@ def login():
 def main(current_user):
     return render_template('main.html', username=current_user['username'])
 
+@app.route('/add-question', methods=['POST'])
+@token_required
+def add_question(current_user):
+    data = request.get_json()
+    question = data.get('question')
+    answer = data.get('answer')
+
+    if not question or not answer:
+        return jsonify({'success': False, 'message': 'Missing question or answer'}), 400
+
+    new_question = {
+        'question': question,
+        'answer': answer,
+        'views': 0,
+        'user': current_user['username']
+    }
+
+    inserted_id = db.questions.insert_one(new_question).inserted_id
+    new_question['_id'] = str(inserted_id)  # Convert ObjectId to string
+
+    return jsonify({'success': True, 'newQuestion': new_question}), 200
+
+@app.route('/get-questions', methods=['GET'])
+@token_required
+def get_questions(current_user):
+    questions = list(db.questions.find({'user': current_user['username']}))
+    for question in questions:
+        question['_id'] = str(question['_id'])  # Convert ObjectId to string
+    return jsonify({'success': True, 'questions': questions}), 200
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
