@@ -9,52 +9,44 @@
     <link rel="stylesheet" href="/static/css/mypage.css">
 </head>
 <body>
-    <div id = "1">
-    <div id = "1">
     <div class="mypage-container">
         <div class="mypage-wrap">
             <!-- 삭제 모달 -->
             <div class="deletemodal">
-            <div class="deletemodal">
                 <div class="modal_popup">
-                    <div class="modal_container w-[333px] h-[337px] flex flex-col items-center justify-center">
                     <div class="modal_container w-[333px] h-[337px] flex flex-col items-center justify-center">
                         <div class="p-5">
                             <div class="mt-7 flex flex-col gap-2"></div>
-                            <form class="w-full">
-                                <div>
-                                    <div class="input_section w-[320px] mb-9">
-                                    <div class="input_section w-[320px] mb-9">
-                                        <div class="delete_inform">
-                                            <label id="delete_message" class="block w-[320px] grid place-items-center rounded-lg px-3 py-1 outline-none text-black text-xl">
-                                            <label id="delete_message" class="block w-[320px] grid place-items-center rounded-lg px-3 py-1 outline-none text-black text-xl">
-                                                질문을 삭제하시겠습니까?
-                                            </label>                                            
-                                            </label>                                            
+                                <form class="w-full">
+                                    <div>
+                                        <div class="input_section w-[320px] mb-9">
+                                            <div class="delete_inform">
+                                                <label id="delete_message" class="block w-[320px] grid place-items-center rounded-lg px-3 py-1 outline-none text-black text-xl">
+                                                    질문을 삭제하시겠습니까?
+                                                </label>                                            
+                                            </div>
+                                        </div>
+                                        <div class="submit_btn flex gap-4">
+                                            <button id="cancel_delete"
+                                                    type="submit"
+                                                    class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
+                                                취소
+                                            </button>
+                                            <button id="confirm_delete"
+                                                    onclick="deleteCard('${id}')"
+                                                    type="submit"
+                                                    class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
+                                                삭제
+                                            </button>
                                         </div>
                                     </div>
-                                    <div class="submit_btn flex gap-4">
-                                    <div class="submit_btn flex gap-4">
-                                        <button id="cancel_delete"
-                                                type="submit"
-                                                class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
-                                            취소
-                                        </button>
-                                        <button id="confirm_delete"
-                                                onclick="deleteCard()"
-                                                type="submit"
-                                                class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
-                                            삭제
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>    
             <!-- 수정 모달 -->
-            <div class="editmodal">
             <div class="editmodal">
                 <div class="modal_popup">
                     <div class="modal_container w-[333px] h-[337px]">
@@ -65,16 +57,10 @@
                                     <div class="edit_section">
                                         <label for="edit">질문 수정</label>
                                         <input id="edit_question" name="edit_question" type="text" required=""
-                                        class="block w-[320px] w-full text-sm rounded-lg border border-gray-300 px-3 py-10 pb-3 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
-                                        <label for="edit">질문 수정</label>
-                                        <input id="edit_question" name="edit_question" type="text" required=""
-                                        class="block w-[320px] w-full text-sm rounded-lg border border-gray-300 px-3 py-10 pb-3 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
-                                        placeholder="" value="">
+                                            class="block w-[320px] w-full text-sm rounded-lg border border-gray-300 px-3 py-10 pb-3 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
+                                            placeholder="" value="">
                                     </div>
                                     <div class="answer_section">
-                                        <label for="answer">정답</label>
-                                        <input id="edit_answer" name="edit_answer" type="text" required=""
-                                            class="mt-2 w-[320px] block w-full text-sm rounded-lg border border-gray-300 px-3 py-4 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
                                         <label for="answer">정답</label>
                                         <input id="edit_answer" name="edit_answer" type="text" required=""
                                             class="mt-2 w-[320px] block w-full text-sm rounded-lg border border-gray-300 px-3 py-4 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
@@ -83,10 +69,7 @@
                                 </div>
                                 <p class="mb-3 mt-2 text-sm text-gray-500"></p>
                                 <div class="edit_btn">
-                                <div class="edit_btn">
                                     <button type="submit"
-                                            onclick="editCard()"
-                                            class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
                                             onclick="editCard()"
                                             class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
                                         수정
@@ -109,10 +92,8 @@
                     </div>
                 </div>
             </div>
-        
             <div class="mypage-nav">
                 <a href="{{ url_for('main') }}"><img class="mypage-logo" src="/static/logo.png"/></a>
-            
                 <div class="name-wrap">
                     <span class="name">{{ username }}</span>
                     <span>님</span>
@@ -151,12 +132,7 @@
             </div>
         </div>
     </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
+
     <script>
         $(document).ready(function() {
             // 수정 모달
@@ -207,6 +183,25 @@
             let question = $("#edit_question").val();
             let answer = $("#edit_answer").val();
 
+            $.ajax({
+                    type: "POST",
+                    url: "/api/edit",
+                    contentType: "application/json",
+                    data: JSON.stringify({'question':question, 'answer':answer}),
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            let editedCard = $(`.card-wrap:contains('${question}')`);
+                            editedCard.find('.question').text(question);
+                            editedCard.find('.answer').text(answer);
+                            
+                            $('.editmodal').removeClass('on');
+                            
+
+                        }
+                    }
+                });
+
+
             let temp_html = `<div class="card-wrap">
                     <div class="card-content-wrap">
                         <div class="card-content-question-wrap">
@@ -241,8 +236,22 @@
         }
 
         // 삭제 버튼을 눌렀을 때
-        function deleteCard(){ 
-            
+        function deleteCard(id){ 
+            $.ajax({
+                    type: "POST",
+                    url: "/api/delete",
+                    contentType: "application/json",
+                    data: JSON.stringify({'id':id}),
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            $(`.card-wrap[data-id='${id}']`).remove();
+                            $('.deletemodal').removeClass('on');
+                        } else {
+                            alert('카드 삭제에 실패했습니다.')
+                            }
+                        }
+                    }
+                );
 
         }
    </script>
