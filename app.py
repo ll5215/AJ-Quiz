@@ -8,11 +8,9 @@ from bson.objectid import ObjectId
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
-
 client = MongoClient(app.config['MONGO_URI'])
 db = client.aj
 SECRET_KEY = app.config['JWT_SECRET_KEY']
-
 def token_required(f):
     def wrap(*args, **kwargs):
         token = request.cookies.get('access_token')
@@ -26,21 +24,17 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     wrap.__name__ = f.__name__
     return wrap
-
 @app.route('/')
 def index():
     return redirect(url_for('login'))
-
 @app.route('/mypage', methods=['GET', 'POST'])
 @token_required
 def mypage(current_user):
     return render_template('mypage.html', username=current_user['username'])
-
 @app.route('/card-detail')
 @token_required
 def card_detail(current_user):
     return render_template('card-detail.html', username=current_user['username'])
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -50,7 +44,6 @@ def register():
         db.users.insert_one({'username': username, 'password': hashed_password})
         return redirect(url_for('login'))
     return render_template('register.html')
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -72,7 +65,6 @@ def login():
         resp.set_cookie('access_token', token, httponly=True)
         return resp
     return render_template('login.html')
-
 @app.route('/main')
 @token_required
 def main(current_user):

@@ -4,53 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="/static/css/login.css">
 
-<script>
-    function handleLogin(event) {
-        event.preventDefault();
-        const form = event.target;
-        const username = form.username.value;
-        const password = form.password.value;
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            const form = event.target;
+            const username = form.username.value;
+            const password = form.password.value;
 
-        clearErrors();
+            clearErrors();
 
-        fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === 'Login successful') {
-                window.location.href = '/main';
-            } else if (data.message === 'Invalid username') {
-                showError(document.getElementById('username'), '아이디를 확인해주세요');
-            } else if (data.message === 'Invalid password') {
-                showError(document.getElementById('password'), '비밀번호를 확인해주세요');
-            }
-        })
-        .catch(error => {
-            alert('An error occurred');
-        });
-    }
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Login successful') {
+                    window.location.href = '/main';
+                } else if (data.message === 'Invalid username') {
+                    showError(document.getElementById('username'), '아이디를 확인해주세요');
+                } else if (data.message === 'Invalid password') {
+                    showError(document.getElementById('password'), '비밀번호를 확인해주세요');
+                }
+            })
+            .catch(error => {
+                alert('An error occurred');
+            });
+        }
 
-    function showError(inputElement, message) {
+        function showError(inputElement, message) {
             inputElement.classList.add('error');
             const errorElement = `<div class="error-message">${message}</div>`;
             inputElement.insertAdjacentHTML('afterend', errorElement);
         }
 
-    function clearErrors() {
-        const errorMessages = document.querySelectorAll('.error-message');
-        errorMessages.forEach(el => el.remove());
+        function clearErrors() {
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(el => el.remove());
 
-        const errorInputs = document.querySelectorAll('input.error');
-        errorInputs.forEach(el => el.classList.remove('error'));
-    }
-</script>
+            const errorInputs = document.querySelectorAll('input.error');
+            errorInputs.forEach(el => el.classList.remove('error'));
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const modal = document.querySelector('.modal');
+            const modalOpen = document.querySelector('.modal_btn');
+            const modalClose = document.querySelector('.close_btn');
+
+            // 열기 버튼을 눌렀을 때 모달팝업이 열림
+            modalOpen.addEventListener('click', function() {
+                //'on' class 추가
+                modal.classList.add('on');
+            });
+
+            // 닫기 버튼을 눌렀을 때 모달팝업이 닫힘
+            modalClose.addEventListener('click', function() {
+                //'on' class 제거
+                modal.classList.remove('on');
+            });
+        });
+
+        const userIdInput = document.querySelector('.user_Id');
+        userIdInput.addEventListener('input', function () {
+            if (!checkKorean(this.value)) {
+                this.classList.add('border-red-500');
+            } else {
+                this.classList.remove('border-red-500')
+            }
+        })
+
+        
+    </script>
 </head>
 <body>
     <div class="login-container">
@@ -63,10 +95,45 @@
                 </div>
                 <div class="bottom-wrap">
                     <input class="btn-login" type="submit" value="로그인">
-                    <a href="/register" class="register-link">회원가입</a>
+                    <div class="modal_btn">회원가입</div>
                 </div>
             </form>
         </div>
     </div>
+    <!--모달 팝업-->
+    <div class="modal">
+        <div class="modal_popup rounded-lg w-auto">
+            <div class = "flex flex-col mb-16">
+            <label class = "flex justify-center font-bold">회원가입</label>
+            </div>
+            <div class = "w-[350px] h-[300px]">
+                <div class = "flex flex-col">
+                    <label class = "mb-2 text-sm">아이디</label>
+                    <input type ="text" class = " user_Id text-sm block w-80 h-12 border border-black rounded-md mb-5" placeholder="이름을 입력해주세요(예.홍길동)">
+                </div>
+                <div class = "flex flex-col">
+                    <label class = "mb-2 text-sm">비밀번호</label>
+                    <input type ="password" class = " user_Password text-sm block w-80 h-12 border border-black rounded-md mb-8" placeholder="기수번호를 입력해주세요(ex.6기 33번 -> 0633)">
+                </div>
+            </div>
+            <!-- 회원가입 버튼 -->
+            <button 
+                            
+                            type="button"
+                            class="close_btn absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center popup-close"><svg
+                                aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                cliprule="evenodd"></path>
+                        </svg>
+                        <span class="sr-only">Close popup</span>
+                    </button>
+
+                    <button type = "button" class = "w-full h-12 px-[14px] bg-gray-400 text-white text-center rounded-md font-semibold">회원가입</button> 
+        
+        </div>
+    </div>
+    <!--end 모달 팝업-->
 </body>
 </html>
