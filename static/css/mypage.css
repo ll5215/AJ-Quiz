@@ -200,7 +200,6 @@ h2{
     background: #ffffff;
     border-radius: 20px;
     width: 377px;
-    height: 390px;
 }
 .deletemodal .modal_popup {
     /*팝업*/
@@ -235,4 +234,10 @@ h2{
 #confirm_delete, .edit_btn >  button  {
     background-color: #222222;
 
+}
+
+.input_section{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }

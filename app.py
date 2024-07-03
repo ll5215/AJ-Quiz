@@ -33,7 +33,10 @@ def index():
 @app.route('/mypage', methods=['GET', 'POST'])
 @token_required
 def mypage(current_user):
-    return render_template('mypage.html', username=current_user['username'])
+    questions = list(db.questions.find({'user': current_user['username']}))
+    for question in questions:
+        question['_id'] = str(question['_id'])  # ObjectId를 문자열로 변환
+    return render_template('mypage.html', username=current_user['username'], questions=questions)
 
 @app.route('/card-detail')
 @token_required
@@ -182,26 +185,32 @@ def get_user_answers(current_user):
         answer['question_id'] = str(answer['question_id'])  # ObjectId를 문자열로 변환
     return jsonify({'success': True, 'userAnswers': user_answers}), 200
 
-@app.route('/delete/questions', methods=['POST'])
+@app.route('/edit/questions', methods=["POST"])
 @token_required
-def delete_questions():
-    question_receieve = request.form['question_give']
-    db.questions.delete_one({'question' : question_receieve})
+def edit_questions(current_user):
+    data = request.get_json()
+    question_id = data.get('question_id')
+    question_receieve = data.get('question')
+    answer_receieve = data.get('answer')
     
-    return jsonify({'result' : 'success'})
-
-@app.route('/edit/questions', methods = ["POST"])
-@token_required
-def edit_questions():
-    question_receieve = request.form['question_give']
-    answer_receieve = request.form['answer_give']
-    count_receive = request.form['count_give']
-    
-    result = db.questions.update_one({'count':int(count_receive)}, {'$set':{'question':question_receieve, 'answer':answer_receieve}})
+    result = db.questions.update_one({'_id': ObjectId(question_id), 'user': current_user['username']},
+                                     {'$set': {'question': question_receieve, 'answer': answer_receieve}})
     if result.modified_count == 1:
-        return jsonify({'result':'success'})
+        return jsonify({'result': 'success'})
     else:
-        return jsonify({'result':'failure'})
+        return jsonify({'result': 'failure'})
+
+@app.route('/delete/questions', methods=["POST"])
+@token_required
+def delete_questions(current_user):
+    data = request.get_json()
+    question_id = data.get('question_id')
+    result = db.questions.delete_one({'_id': ObjectId(question_id), 'user': current_user['username']})
+    
+    if result.deleted_count == 1:
+        return jsonify({'result': 'success'})
+    else:
+        return jsonify({'result': 'failure'})
 
 @app.route('/get-question-answers/<question_id>', methods=['GET'])
 @token_required
