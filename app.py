@@ -150,6 +150,7 @@ def submit_answer(current_user):
     data = request.get_json()
     question_id = data.get('question_id')
     user_answer = data.get('answer')
+    
 
     if not question_id or not user_answer:
         return jsonify({'success': False, 'message': 'Missing question ID or answer'}), 400
@@ -192,7 +193,7 @@ def delete_questions():
     
     return jsonify({'result' : 'success'})
 
-@app.route('/edit/questions', methods = ["PUT"])
+@app.route('/edit/questions', methods = ["POST"])
 @token_required
 def edit_questions():
     question_receieve = request.form['question_give']

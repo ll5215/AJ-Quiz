@@ -143,6 +143,8 @@
     
             // 로그아웃 버튼
             const logoutButton = $('.btn-logout');
+
+
     
             // 로그아웃 버튼 클릭 시 로그아웃 처리
             logoutButton.on('click', function() {
@@ -198,7 +200,7 @@
             
     
             $.ajax({
-                    type: "PUT",
+                    type: "POST",
                     url: "/edit/questions",
                     data: {question_give:question, answer_give:answer, count_give:count},
                     success: function (response) {
