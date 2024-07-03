@@ -217,6 +217,11 @@ h2{
     display: block;
 }
 
-.submit_btn > button {
+#cancel_delete {
     background-color: #909090;
+}
+
+#confirm_delete {
+    background-color: #222222;
+    
 }

@@ -9,6 +9,41 @@
 <body>
     <div class="mypage-container">
         <div class="mypage-wrap">
+            <!-- 삭제 모달 -->
+            <div class="modal">
+                <div class="modal_popup">
+                    <div class="modal_container w-[333px] h-[337px]">
+                        <div class="p-5">
+                            <div class="mt-7 flex flex-col gap-2"></div>
+                            <form class="w-full">
+                                <div>
+                                    <div class="input_section w-[320px] h-[304px] mb-9">
+                                        <div class="delete_inform">
+                                            <label name="delete" id="delete_message" class="block w-[320px] w-full rounded-lg border border-gray-300 px-3 py-1 shadow-sm outline-none placeholder-top text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1">
+                                                질문을 삭제하시겠습니까?
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <p class="mb-3 mt-2 text-sm text-gray-500"></p>
+                                    <div class="submit_btn">
+                                        <button id="cancel_delete"
+                                                type="submit"
+                                                class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
+                                            취소
+                                        </button>
+                                        <button id="confirm_delete"
+                                                type="submit"
+                                                class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
+                                            삭제
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 수정 모달 -->
             <div class="modal">
                 <div class="modal_popup">
                     <div class="modal_container w-[333px] h-[337px]">
@@ -98,16 +133,29 @@
     </div>
     <script>
         const modal = document.querySelector('.modal');
-        const modalOpen = document.querySelector('.edit');
-        const modalClose = document.querySelector('#close_btn');
+        const editModalOpen = document.querySelector('.edit');
+        const editModalClose = document.querySelector('#close_btn');
+        const deleteModalOpen = document.querySelector('.delete');
+        const deleteModalClose = document.querySelector('#cancel_delete');
 
-        //열기 버튼을 눌렀을 때 모달팝업이 열림
-        modalOpen.addEventListener('click',function(){
+        //열기 버튼을 눌렀을 때 수정 모달팝업이 열림
+        editModalOpen.addEventListener('click',function(){
             //'on' class 추가
             modal.classList.add('on');
         });
-        //닫기 버튼을 눌렀을 때 모달팝업이 닫힘
-        modalClose.addEventListener('click',function(){
+        //닫기 버튼을 눌렀을 때 수정 모달팝업이 닫힘
+        editModalClose.addEventListener('click',function(){
+            //'on' class 제거
+            modal.classList.remove('on');
+        });
+
+         //열기 버튼을 눌렀을 때 삭제 모달팝업이 열림
+        deleteModalOpen.addEventListener('click',function(){
+            //'on' class 추가
+            modal.classList.add('on');
+        });
+        //닫기 버튼을 눌렀을 때 삭제 모달팝업이 닫힘
+        deleteModalClose.addEventListener('click',function(){
             //'on' class 제거
             modal.classList.remove('on');
         });
