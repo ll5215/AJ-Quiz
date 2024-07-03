@@ -172,6 +172,18 @@ def delete_questions():
     
     return jsonify({'result' : 'success'})
 
+@app.route('/edit/questions', methods = ["PUT"])
+@token_required
+def edit_questions():
+    question_receieve = request.form['question_give']
+    answer_receieve = request.form['answer_give']
+    count_receive = request.form['count_give']
+    
+    result = db.questions.update_one({'count':int(count_receive)}, {'$set':{'question':question_receieve, 'answer':answer_receieve}})
+    if result.modified_count == 1:
+        return jsonify({'result':'success'})
+    else:
+        return jsonify({'result':'failure'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)

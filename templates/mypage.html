@@ -32,7 +32,7 @@
                                                 취소
                                             </button>
                                             <button id="confirm_delete"
-                                                    onclick="deleteCard('${id}')"
+                                                    onclick="deleteCard()"
                                                     type="submit"
                                                     class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
                                                 삭제
@@ -69,7 +69,7 @@
                                 <p class="mb-3 mt-2 text-sm text-gray-500"></p>
                                 <div class="edit_btn">
                                     <button type="submit"
-                                            onclick="editCard()"
+                                            onclick="editCard('${count}')"
                                             class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
                                         수정
                                     </button>
@@ -178,25 +178,23 @@
 
 
         // 모달 내에서 수정 버튼을 눌렀을 때
-        function editCard(){
+        function editCard(count){
             let question = $("#edit_question").val();
             let answer = $("#edit_answer").val();
+            
 
             $.ajax({
-                    type: "POST",
-                    url: "/api/edit",
-                    contentType: "application/json",
-                    data: JSON.stringify({'question':question, 'answer':answer}),
+                    type: "PUT",
+                    url: "/edit/questions",
+                    data: {question_give:question, answer_give:answer, count_give:count},
                     success: function (response) {
                         if (response['result'] == 'success') {
-                            let editedCard = $(`.card-wrap:contains('${question}')`);
-                            editedCard.find('.question').text(question);
-                            editedCard.find('.answer').text(answer);
-                            
-                            $('.editmodal').removeClass('on');
-                            
-
+                            alert('수정 완료!')
+                            console.log(response['result'])
+                        } else {
+                            alert('카드 수정에 실패했습니다.')
                         }
+                        
                     }
                 });
 
@@ -235,7 +233,7 @@
         }
 
         // 삭제 버튼을 눌렀을 때
-        function deleteCard(id){ 
+        function deleteCard(){ 
             $.ajax({
                     type: "POST",
                     url: "/delete/questions",
