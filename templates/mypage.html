@@ -143,16 +143,33 @@
             const deleteModal = $('.deletemodal');
             const deleteModalOpen = $('.delete');
             const deleteModalClose = $('#cancel_delete');
+    
+            // 로그아웃 버튼
+            const logoutButton = $('.btn-logout');
+    
+            // 로그아웃 버튼 클릭 시 로그아웃 처리
+            logoutButton.on('click', function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/logout",
+                    success: function() {
+                        window.location.href = '/login';
+                    },
+                    error: function() {
+                        alert('로그아웃에 실패했습니다.');
+                    }
+                });
+            });
             
             //열기 버튼을 눌렀을 때 수정 모달팝업이 열림
             editModalOpen.on('click', function() {
                 //'on' class 추가
                 editModal.addClass('on');
-
+    
                 // 모달 입력 필드에 기존 값 설정하기
                 const editQuestion = $('.question').text(); // 카드에서 질문 텍스트 가져오기
                 const editAnswer = $('.answer').text(); // 카드에서 답변 텍스트 가져오기
-
+    
                 $('#edit_question').val(editQuestion);
                 $('#edit_answer').val(editAnswer);
             });
@@ -175,14 +192,14 @@
                 deleteModal.removeClass('on');
             });
         });
-
-
+    
+    
         // 모달 내에서 수정 버튼을 눌렀을 때
         function editCard(count){
             let question = $("#edit_question").val();
             let answer = $("#edit_answer").val();
             
-
+    
             $.ajax({
                     type: "PUT",
                     url: "/edit/questions",
@@ -197,8 +214,8 @@
                         
                     }
                 });
-
-
+    
+    
             let temp_html = `<div class="card-wrap">
                     <div class="card-content-wrap">
                         <div class="card-content-question-wrap">
@@ -227,11 +244,11 @@
                         </div>
                     </div>
                 </div>`
-
+    
             
             $(".card-container").append(temp_html);
         }
-
+    
         // 삭제 버튼을 눌렀을 때
         function deleteCard(){ 
             $.ajax({
@@ -248,8 +265,9 @@
                         }
                     }
                 );
-
+    
         }
-   </script>
+    </script>
+    
 </body>
 </html>

@@ -90,6 +90,13 @@ def login():
             return jsonify({'message': f"Internal server error: {e}"}), 500
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    resp = make_response(redirect(url_for('login')))
+    resp.set_cookie('access_token', '', expires=0)
+    return resp
+
+
 @app.route('/main')
 @token_required
 def main(current_user):
