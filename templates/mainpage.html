@@ -15,23 +15,33 @@
             font-family: Arial, sans-serif;
             background-color: #fff;
         }
-  
-        .medal {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            background-color: #FFD700;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 24px;
-            margin-right: 8px;
+        
+        .top-wrap {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 430px;
+            margin-top: 19px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
         }
-        .medal.second {
-            background-color: #C0C0C0;
+
+        .top-wrap div {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .medal.third {
-            background-color: #CD7F32;
+
+        .logo{
+            width: 35px;
+            height: 48.7px;
+
         }
+
         .answer-card {
             background-color: #F0F0F0;
             border-radius: 8px;
@@ -105,7 +115,7 @@
         }
 
         .player {
-            width: 100%;
+            width: 430px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -121,37 +131,63 @@
             margin-right: 8px; /* Adjust the spacing between the image and text as needed */
         }
         .middle-wrap {
-            position: fixed;
+            position: fixed; 
+            margin-top: 33px;
             top: calc(10% + 33px);
             left: 50%;
-            transform: translate(-50%);
+            transform: translate(-50%, 0);
             width: 430px;
-            height: 80px;
+            max-width: 100%;
+            height: 76px;
             display: flex;
             flex-direction: column;
             gap: 20px;
             align-items: center;
-            margin-top: 33px;
         }
-        
+        .bottom-wrap {
+            position: fixed;
+            top: calc(10% + 33px + 68px + 80px);
+            left: 50%;
+            transform: translate(-50%);
+            width: 430px;
+            max-width: 100%;
+            height: calc(70% - 33px - 76px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-top: 68px; /* Adds spacing from middle-wrap */
+            
+        }
+
+        .card-list {
+            overflow-y: auto;
+        }
+
     </style>
 </head>
 <body class="font-sans bg-gray-100">
-    <div class="container mx-auto px-4 py-8 bg-white max-w-lg shadow-lg">
+    <div class="container">
         <div class="flex items-center justify-between mb-4 top-wrap">
-            <img src="../static/src/logo.png" alt="logo" class="w-16 h-16 logo">
-            <h2 class="text-xl font-semibold">박하연 <span class="text-sm font-semibold">님</span></h2>
-        </div>
-        <div class="text-center mb-8 middle-wrap">
-            <h3 class="text-xl font-bold score">AJ 순위</h3>
-            <div class="flex justify-around mt-4 player">
-                <div><img src="../static/src/medal-gold.png" alt="medal-gold"> 윤민성</div>
-                <div><img src="../static/src/medal-silver.png" alt="medal-silver"> 정소연</div>
-                <div><img src="../static/src/medal-bronze.png" alt="medal-bronze"> 박하연</div>
+            <div>   
+                <a href="#"><img src="../static/src/logo.png" alt="logo" class="w-16 h-16 logo"></a>
+                <a href="#"><h2 class="text-xl font-semibold"><span class="text-sm font-semibold">님</span></h2></a>
             </div>
         </div>
-        <div id="answer-cards" class="bottom-wrap"></div>
-        <button class="fixed-button" onclick="addAnswerCard()">작성</button>
+        <div class="text-center mb-8">
+            <div class="middle-wrap">
+                <h3 class="text-xl font-bold score">AJ 순위</h3>
+                <div class="flex justify-around mt-4 player">
+                    <div><img src="../static/src/medal-gold.png" alt="medal-gold">윤민성</div>
+                    <div><img src="../static/src/medal-silver.png" alt="medal-silver">정소연</div>
+                    <div><img src="../static/src/medal-bronze.png" alt="medal-bronze">박하연</div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-wrap">
+            <div id="answer-cards" class="card-list">
+                <button class="fixed-button" onclick="addAnswerCard()">작성</button>
+            </div>
+        </div>
     </div>
     <script>
         const answerData = [
@@ -181,12 +217,13 @@
             answerData.forEach(data => {
                 const card = document.createElement('div');
                 card.className = 'answer-card';
-                card.innerHTML = `
+                card.innerHTML = `<div class="card">
                     <div class="view-count">조회수: ${data.views}</div>
                     <div class="question">${data.question}</div>
                     <div class="input-wrap">
                         <input type="text" placeholder="정답을 입력해주세요">
                         <button>제출</button>
+                    </div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -195,7 +232,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             addAnswerCard();
         });
-        
+        const userName = "홍길동"; // 로그인한 사용자의 이름
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.text-xl').textContent = `${userName} 님`;
+        });
 
     </script>
 </body>
