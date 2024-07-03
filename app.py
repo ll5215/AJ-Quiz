@@ -92,7 +92,7 @@ def login():
                 return jsonify({'message': 'Invalid password'}), 401
             payload = {
                 'username': username,
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
+                'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
             }
             logging.info(f"Payload: {payload}")
             token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
@@ -103,7 +103,7 @@ def login():
             logging.error(f"Login error: {e}")
             return jsonify({'message': f"Internal server error: {e}"}), 500
     return render_template('login.html')
-
+    
 @app.route('/logout')
 def logout():
     resp = make_response(redirect(url_for('login')))
