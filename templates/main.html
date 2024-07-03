@@ -183,7 +183,53 @@
                 <button class="fixed-button" onclick="addAnswerCard()">작성</button>
             </div>
         </div>
+    <!--모달 팝업-->
+        <div class="modal">
+            <div class="modal_popup">
+                <div class="p-5">
+                    <div class="mt-7 flex flex-col gap-2"></div>
+                    <div class="flex w-full items-center gap-2 py-6 text-sm text-slate-600">
+                        <div class="h-px w-full bg-slate-200"></div>
+                    </div>
+                    <form class="w-full">
+                        <label>질문 작성</label>
+                        <input name="problem" type="text" required=""
+                        class="block w-full rounded-lg border border-gray-300 px-3 py-10 shadow-sm outline-none placeholder-top text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
+                        placeholder="질문을 작성해주세요(20자 이내)" value="">
+                        <label>정답</label>
+                        <input name="answer" type="text" required=""
+                               class="mt-2 block w-full rounded-lg border border-gray-300 px-3 py-4 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
+                               placeholder="정답을 작성해주세요(10자 이내)" value="">
+                        <p class="mb-3 mt-2 text-sm text-gray-500">
+
+                        </p>
+                        <button type="submit"
+                                class="inline-flex w-full items-center justify-center rounded-lg bg-indigo-500 p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
+                            등록
+                        </button>
+                    </form>
+                </div>
+                <button 
+                        id="close_btn"
+                        type="button"
+                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center popup-close"><svg
+                            aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                              cliprule="evenodd"></path>
+                    </svg>
+                    <span class="sr-only">Close popup</span>
+                </button>
+            </div>
+        </div>
     </div>
+        <!--end 모달 팝업-->
+        <main>
+            <section>
+                <button class="fixed-button" onclick="addAnswerCard()">작성</button>
+            </section>
+        </main>   
     <script>
         const answerData = [
             {
@@ -236,6 +282,21 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.text-xl').textContent = `${userName} 님`;
+        });
+
+        const modal = document.querySelector('.modal');
+        const modalOpen = document.querySelector('.fixed-button');
+        const modalClose = document.querySelector('#close_btn');
+
+        //열기 버튼을 눌렀을 때 모달팝업이 열림
+        modalOpen.addEventListener('click',function(){
+            //'on' class 추가
+            modal.classList.add('on');
+        });
+        //닫기 버튼을 눌렀을 때 모달팝업이 닫힘
+        modalClose.addEventListener('click',function(){
+            //'on' class 제거
+            modal.classList.remove('on');
         });
 
     </script>
