@@ -39,6 +39,7 @@
     border-radius: 6px;
 }
 
+
 .input-wrap input.error {
     border-color: red;
 }
@@ -59,11 +60,11 @@
     border-radius: 6px;
 }
 
-.btn-login:hover {
-    background-color: #4A4A4A;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
+.register-btn{
+    color: #fff;
+    background-color: #222;
 }
+
 
 .bottom-wrap {
     display: flex;
@@ -120,4 +121,8 @@
 
 .modal.on {
     display : block;
+}
+
+#register_username, #register_password{
+    padding: 0px 8px;
 }

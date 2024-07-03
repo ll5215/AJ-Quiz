@@ -46,15 +46,27 @@ def card_detail(current_user):
     question_id = request.args.get('question_id')
     return render_template('card-detail.html', username=current_user['username'], question=question, answer=answer, user_answer=user_answer, views=views, correct=correct, question_id=question_id)
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['POST'])
 def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+    try:
+        data = request.get_json()
+        if data is None:
+            return jsonify({'message': 'No input data provided'}), 400
+        username = data.get('username')
+        password = data.get('password')
+        if not username or not password:
+            return jsonify({'message': 'Username and password are required'}), 400
+
+        if db.users.find_one({'username': username}):
+            return jsonify({'message': 'Username already exists'}), 409
+
         hashed_password = generate_password_hash(password)
         db.users.insert_one({'username': username, 'password': hashed_password})
-        return redirect(url_for('login'))
-    return render_template('register.html')
+        return jsonify({'message': 'Registration successful'}), 201
+    except Exception as e:
+        logging.error(f"Registration error: {e}")
+        return jsonify({'message': f"Internal server error: {e}"}), 500
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

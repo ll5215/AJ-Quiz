@@ -6,6 +6,22 @@
     <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/login.css">
+    <style>
+        .modal.on {
+            display: flex;
+        }
+        .error-border {
+            border-color: red;
+        }
+        .btn-disabled {
+            background-color: #909090;
+            color: #C7C7C7;
+            cursor: not-allowed;
+        }
+        .btn-enabled:hover {
+            background-color: #5A5A5A;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
@@ -13,18 +29,19 @@
         <div class="form-container">
             <form class="main-form">
                 <div class="input-wrap">
-                    <input type="text" id="username" name="username" class = "w-full" placeholder="아이디를 입력해주세요" required>
-                    <input type="password" id="password" name="password" class = "w-full" placeholder="비밀번호를 입력해주세요" required>
+                    <input type="text" id="username" name="username" class="w-full" placeholder="아이디를 입력해주세요" required>
+                    <input type="password" id="password" name="password" class="w-full" placeholder="비밀번호를 입력해주세요" required>
                 </div>
                 <div class="bottom-wrap">
-                    <input class="btn-login" type="submit" value="로그인">
+                    <button class="btn-login" type="submit" disabled>로그인</button>
+
                     <div class="modal_btn">회원가입</div>
                 </div>
             </form>
         </div>
     </div>
     <!--모달 팝업-->
-    <div class="modal">
+    <div class="modal hidden">
         <div class="modal_popup rounded-lg w-auto">
             <div class = "flex flex-col mb-16">
                 <label class = "flex justify-center font-bold">회원가입</label>
@@ -32,21 +49,20 @@
             <div class = "w-[350px] h-[300px]">
                 <div class = "flex flex-col">
                     <label class = "mb-2 text-sm">아이디</label>
-                    <input type ="text" class = " user_Id text-sm block w-80 h-12 border border-black rounded-md mb-5" placeholder="이름을 입력해주세요(예.홍길동)">
+                    <input type="text" id="register_username" class="user_Id text-sm block w-80 h-12 border border-black rounded-md mb-5" placeholder="아이디를 입력해주세요">
                 </div>
                 <div class = "flex flex-col">
-                    <label class = "mb-2 text-sm">비밀번호</label>
-                    <input type ="password" class = " user_Password text-sm block w-80 h-12 border border-black rounded-md mb-8" placeholder="기수번호를 입력해주세요(ex.6기 33번 -> 0633)">
+                    <label class="mb-2 text-sm">비밀번호</label>
+                    <input type="password" id="register_password" class="user_Password text-sm block w-80 h-12 border border-black rounded-md mb-8" placeholder="비밀번호를 입력해주세요">
                 </div>
             </div>
-            <!-- 회원가입 버튼 -->
-            <button type="button" class="close_btn absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center popup-close">
+            <button id="register_btn" type="button" class="register-btn w-full h-12 px-[14px] text-white text-center rounded-md font-semibold" disabled>회원가입</button>
+            <button type="button" class="close_btn absolute top-3 right-3 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
                 <svg aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                 </svg>
                 <span class="sr-only">Close popup</span>
             </button>
-            <button type="button" class="w-full h-12 px-[14px] bg-gray-400 text-white text-center rounded-md font-semibold">회원가입</button> 
         </div>
     </div>
     <!--end 모달 팝업-->
@@ -55,10 +71,22 @@
             function handleLogin(event) {
                 event.preventDefault();
                 const form = event.target;
-                const username = form.username.value;
-                const password = form.password.value;
+                const username = form.username.value.trim();
+                const password = form.password.value.trim();
 
                 clearErrors();
+
+                if (!username || !password) {
+                    if (!username) {
+                        document.getElementById('username').classList.add('error-border');
+                    }
+                    if (!password) {
+                        if (username) {
+                            document.getElementById('password').classList.add('error-border');
+                        }
+                    }
+                    return;
+                }
 
                 fetch('/login', {
                     method: 'POST',
@@ -82,8 +110,54 @@
                 });
             }
 
+            function handleRegister() {
+                const username = document.getElementById('register_username').value.trim();
+                const password = document.getElementById('register_password').value.trim();
+
+                clearRegisterErrors();
+
+                if (!username || !password) {
+                    if (!username) {
+                        document.getElementById('register_username').classList.add('error-border');
+                    }
+                    if (!password) {
+                        if (username) {
+                            document.getElementById('register_password').classList.add('error-border');
+                        }
+                    }
+                    return;
+                }
+
+                fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Registration successful') {
+                        alert('회원가입이 완료되었습니다. 로그인을 해주세요.');
+                        closeModal();
+                    } else if (data.message === 'Username already exists') {
+                        alert('이미 존재하는 아이디입니다.');
+                    } else {
+                        alert('회원가입에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    alert('An error occurred');
+                });
+            }
+
+            function clearRegisterErrors() {
+                document.getElementById('register_username').classList.remove('error-border');
+                document.getElementById('register_password').classList.remove('error-border');
+            }
+
             function showError(inputElement, message) {
-                inputElement.classList.add('error');
+                inputElement.classList.add('error-border');
                 const errorElement = `<div class="error-message">${message}</div>`;
                 inputElement.insertAdjacentHTML('afterend', errorElement);
             }
@@ -92,32 +166,81 @@
                 const errorMessages = document.querySelectorAll('.error-message');
                 errorMessages.forEach(el => el.remove());
 
-                const errorInputs = document.querySelectorAll('input.error');
-                errorInputs.forEach(el => el.classList.remove('error'));
+                const errorInputs = document.querySelectorAll('input.error-border');
+                errorInputs.forEach(el => el.classList.remove('error-border'));
+            }
+
+            function closeModal() {
+                const registerForm = document.querySelector('.modal');
+                registerForm.classList.add('hidden');
+                registerForm.classList.remove('on');
+                document.getElementById('register_username').value = '';
+                document.getElementById('register_password').value = '';
+                clearRegisterErrors();
+                checkRegisterInputs(); // Reset the button state
+            }
+
+            function checkLoginInputs() {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const loginButton = document.querySelector('.btn-login');
+
+                if (username && password) {
+                    loginButton.removeAttribute('disabled');
+                    loginButton.classList.remove('btn-disabled');
+                    loginButton.classList.add('btn-enabled');
+                } else {
+                    loginButton.setAttribute('disabled', true);
+                    loginButton.classList.remove('btn-enabled');
+                    loginButton.classList.add('btn-disabled');
+                }
+            }
+
+            function checkRegisterInputs() {
+                const username = document.getElementById('register_username').value.trim();
+                const password = document.getElementById('register_password').value.trim();
+                const registerButton = document.getElementById('register_btn');
+
+                if (username && password) {
+                    registerButton.removeAttribute('disabled');
+                    registerButton.classList.remove('btn-disabled');
+                    registerButton.classList.add('btn-enabled');
+                } else {
+                    registerButton.setAttribute('disabled', true);
+                    registerButton.classList.remove('btn-enabled');
+                    registerButton.classList.add('btn-disabled');
+                }
             }
 
             const modal = document.querySelector('.modal');
             const modalOpen = document.querySelector('.modal_btn');
             const modalClose = document.querySelector('.close_btn');
+            const registerButton = document.getElementById('register_btn');
+            const loginInputs = document.querySelectorAll('#username, #password');
+            const registerInputs = document.querySelectorAll('#register_username, #register_password');
 
             modalOpen.addEventListener('click', function() {
+                modal.classList.remove('hidden');
                 modal.classList.add('on');
             });
 
-            modalClose.addEventListener('click', function() {
-                modal.classList.remove('on');
-            });
+            modalClose.addEventListener('click', closeModal);
 
-            const userIdInput = document.querySelector('.user_Id');
-            userIdInput.addEventListener('input', function () {
-                if (!checkKorean(this.value)) {
-                    this.classList.add('border-red-500');
-                } else {
-                    this.classList.remove('border-red-500')
-                }
-            });
+            registerButton.addEventListener('click', handleRegister);
 
             document.querySelector('.main-form').addEventListener('submit', handleLogin);
+
+            loginInputs.forEach(input => {
+                input.addEventListener('input', checkLoginInputs);
+            });
+
+            registerInputs.forEach(input => {
+                input.addEventListener('input', checkRegisterInputs);
+            });
+
+            // 초기 로드 시 버튼 상태 확인
+            checkLoginInputs();
+            checkRegisterInputs();
         });
     </script>
 </body>
