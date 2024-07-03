@@ -33,6 +33,7 @@
                                             취소
                                         </button>
                                         <button id="confirm_delete"
+                                                onclick="deleteCard()"
                                                 type="submit"
                                                 class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
                                             삭제
@@ -180,8 +181,45 @@
 
         // 모달 내에서 수정 버튼을 눌렀을 때
         function editCard(){
-            // 여기서 할일 
-            // 다시 
+            let question = $("#edit_question").val();
+            let answer = $("#edit_answer").val();
+
+            let temp_html = `<div class="card-wrap">
+                    <div class="card-content-wrap">
+                        <div class="card-content-question-wrap">
+                            <span class="card-content-question">질문 </span>
+                            <div class="question">${question}</div>
+                        </div>
+                        <div class="card-content-answer-wrap">
+                            <span class="card-content-answer">정답</span>
+                            <div class="answer">${answer}</div>
+                        </div>
+                    </div>
+                    <div class="card-bottom">
+                        <div class="card-bottom-info">
+                            <div class="info-views">
+                            <span>조회수:</span>
+                            <span>320</span>
+                            </div>
+                            <div class="info-hearts">
+                                <img class="heart" src="/static/heart-filled.png" />
+                                <span>10</span>
+                            </div>
+                        </div>
+                        <div class="card-bottom-btn">
+                            <button class="edit">수정</button>
+                            <button class="delete">삭제</button>
+                        </div>
+                    </div>
+                </div>`
+
+            
+            $(".card-container").append(temp_html);
+        }
+
+        // 삭제 버튼을 눌렀을 때
+        function deleteCard(){ 
+            
 
         }
    </script>
