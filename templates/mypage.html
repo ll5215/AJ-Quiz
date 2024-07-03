@@ -4,28 +4,36 @@
     <meta charset="UTF-8">
     <title>My page</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/mypage.css">
 </head>
 <body>
     <div id = "1">
+    <div id = "1">
     <div class="mypage-container">
         <div class="mypage-wrap">
             <!-- 삭제 모달 -->
             <div class="deletemodal">
+            <div class="deletemodal">
                 <div class="modal_popup">
+                    <div class="modal_container w-[333px] h-[337px] flex flex-col items-center justify-center">
                     <div class="modal_container w-[333px] h-[337px] flex flex-col items-center justify-center">
                         <div class="p-5">
                             <div class="mt-7 flex flex-col gap-2"></div>
                             <form class="w-full">
                                 <div>
                                     <div class="input_section w-[320px] mb-9">
+                                    <div class="input_section w-[320px] mb-9">
                                         <div class="delete_inform">
+                                            <label id="delete_message" class="block w-[320px] grid place-items-center rounded-lg px-3 py-1 outline-none text-black text-xl">
                                             <label id="delete_message" class="block w-[320px] grid place-items-center rounded-lg px-3 py-1 outline-none text-black text-xl">
                                                 질문을 삭제하시겠습니까?
                                             </label>                                            
+                                            </label>                                            
                                         </div>
                                     </div>
+                                    <div class="submit_btn flex gap-4">
                                     <div class="submit_btn flex gap-4">
                                         <button id="cancel_delete"
                                                 type="submit"
@@ -47,6 +55,7 @@
             </div>
             <!-- 수정 모달 -->
             <div class="editmodal">
+            <div class="editmodal">
                 <div class="modal_popup">
                     <div class="modal_container w-[333px] h-[337px]">
                         <div class="p-5">
@@ -57,9 +66,15 @@
                                         <label for="edit">질문 수정</label>
                                         <input id="edit_question" name="edit_question" type="text" required=""
                                         class="block w-[320px] w-full text-sm rounded-lg border border-gray-300 px-3 py-10 pb-3 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
+                                        <label for="edit">질문 수정</label>
+                                        <input id="edit_question" name="edit_question" type="text" required=""
+                                        class="block w-[320px] w-full text-sm rounded-lg border border-gray-300 px-3 py-10 pb-3 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
                                         placeholder="" value="">
                                     </div>
                                     <div class="answer_section">
+                                        <label for="answer">정답</label>
+                                        <input id="edit_answer" name="edit_answer" type="text" required=""
+                                            class="mt-2 w-[320px] block w-full text-sm rounded-lg border border-gray-300 px-3 py-4 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
                                         <label for="answer">정답</label>
                                         <input id="edit_answer" name="edit_answer" type="text" required=""
                                             class="mt-2 w-[320px] block w-full text-sm rounded-lg border border-gray-300 px-3 py-4 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
@@ -68,7 +83,10 @@
                                 </div>
                                 <p class="mb-3 mt-2 text-sm text-gray-500"></p>
                                 <div class="edit_btn">
+                                <div class="edit_btn">
                                     <button type="submit"
+                                            onclick="editCard()"
+                                            class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
                                             onclick="editCard()"
                                             class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
                                         수정
@@ -128,6 +146,11 @@
                             <button class="edit">수정</button>
                             <button class="delete">삭제</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
                     </div>
                 </div>
             </div>
