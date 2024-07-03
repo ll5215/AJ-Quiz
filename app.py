@@ -67,7 +67,6 @@ def register():
         logging.error(f"Registration error: {e}")
         return jsonify({'message': f"Internal server error: {e}"}), 500
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -107,7 +106,6 @@ def logout():
     resp = make_response(redirect(url_for('login')))
     resp.set_cookie('access_token', '', expires=0)
     return resp
-
 
 @app.route('/main')
 @token_required
@@ -151,7 +149,6 @@ def submit_answer(current_user):
     question_id = data.get('question_id')
     user_answer = data.get('answer')
     
-
     if not question_id or not user_answer:
         return jsonify({'success': False, 'message': 'Missing question ID or answer'}), 400
 
@@ -209,14 +206,14 @@ def edit_questions():
 @app.route('/get-question-answers/<question_id>', methods=['GET'])
 @token_required
 def get_question_answers(current_user, question_id):
-    answers = list(db.answers.find({'question_id': ObjectId(question_id)}))
+    answers = list(db.answers.find({'question_id': ObjectId(question_id)}).sort('likes', -1))  # 좋아요 수로 내림차순 정렬
     user_likes = list(db.likes.find({'user_id': current_user['_id']}))
     liked_answers = [str(like['answer_id']) for like in user_likes]
     
     for answer in answers:
         answer['_id'] = str(answer['_id'])  # ObjectId를 문자열로 변환
         answer['question_id'] = str(answer['question_id'])  # ObjectId를 문자열로 변환
-        answer['liked'] = answer['_id'] in liked_answers  # 사용자가 좋아요를 눌렀는지 여부
+        answer['liked'] = answer['_id'] in liked_answers  # 사용자가 좋아요를 눌렀는지 여부 확인
     
     return jsonify({'success': True, 'answers': answers}), 200
 

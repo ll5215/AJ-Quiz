@@ -63,6 +63,7 @@
                 .then(data => {
                     if (data.success) {
                         const otherAnswersContainer = document.getElementById('other-answers');
+                        otherAnswersContainer.innerHTML = ''; // 기존 답변 삭제
                         data.answers.forEach(answer => {
                             const answerElement = document.createElement('div');
                             answerElement.className = 'bg-gray-100 p-4 rounded-lg mb-4';
