@@ -9,20 +9,20 @@
 <body class="font-sans">
     <div class="container mx-auto px-4 py-8 bg-white max-w-lg">
         <div class="flex items-center justify-between mb-4">
-            <img src="static/logo.png" alt="AJ">
-            <h2 class="text-xl font-semibold">박하연 <span class = "text-sm font-semibold"> 님</span></h2>
+            <a href="{{ url_for('main') }}"><img src="/static/logo.png" alt="AJ"></a>
+            <h2 class="text-xl font-semibold">{{ username }} <span class="text-sm font-semibold">님</span></h2>
         </div>
         <div class="bg-gray-100 p-4 rounded-lg mb-8">
-            <span class="block text-right text-gray-500 text-xs">조회수: 320</span>
+            <span class="block text-right text-gray-500 text-xs" id="view-count">조회수: </span>
             <div class="text-center mb-4">
-                <h3 class="text-lg font-medium">아몬드가 죽으면?</h3>
+                <h3 class="text-lg font-medium" id="question"></h3>
                 <br>
-                <img src="static/wrong.png" alt="X" class = "mx-auto">
+                <img src="/static/wrong.png" alt="X" class="mx-auto">
                 <br>
-                <p class="text-lg font-semibold">정답: 다이아몬드</p>
+                <p class="text-lg font-semibold" id="answer">정답: </p>
             </div>
             <div class="flex justify-between items-center">
-                <span class="text-gray-500 text-xs">작성자: 윤민성</span>
+                <span class="text-gray-500 text-xs">작성자: {{ username }}</span>
                 <span class="flex items-center text-red-500">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     </svg>
@@ -38,7 +38,6 @@
                     <span class="text-gray-500 text-xs">작성자: 정소연</span>
                     <span class="flex items-center text-red-500">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-
                         </svg>
                         <span class="ml-1">❤️10</span>
                     </span>
@@ -49,6 +48,17 @@
             작성
         </button>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const question = params.get('question');
+            const answer = params.get('answer');
+            const views = params.get('views');
+
+            document.getElementById('question').textContent = question;
+            document.getElementById('answer').textContent = `정답: ${answer}`;
+            document.getElementById('view-count').textContent = `조회수: ${views}`;
+        });
+    </script>
 </body>
 </html>
-

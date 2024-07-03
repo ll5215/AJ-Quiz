@@ -9,7 +9,8 @@
     <div class="mypage-container">
         <div class="mypage-wrap">
             <div class="mypage-nav">
-                <img class="mypage-logo" src="/static/logo.png"/>
+                <a href="{{ url_for('main') }}"><img class="mypage-logo" src="/static/logo.png"/></a>
+            
                 <div class="name-wrap">
                     <span class="name">{{ username }}</span>
                     <span>님</span>

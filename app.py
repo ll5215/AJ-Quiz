@@ -70,7 +70,6 @@ def login():
         return resp
     return render_template('login.html')
 
-
 @app.route('/main')
 @token_required
 def main(current_user):
