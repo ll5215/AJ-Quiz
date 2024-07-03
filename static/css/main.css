@@ -215,3 +215,7 @@ h2{
 .modal.on {
     display: block;
 }
+
+.submit_button {
+    background-color: #909090;
+}
