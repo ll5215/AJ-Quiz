@@ -1,18 +1,23 @@
 *{
     margin: 0;
-    font-family: Arial, sans-serif;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.body{
-    height: 100vh;
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
 .mypage-container {
+    width: 430px;
     display: flex;
+    flex-direction: column;
+    margin: 20px 0px;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
 }
 
 .mypage-wrap {
