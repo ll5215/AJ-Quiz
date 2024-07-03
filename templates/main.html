@@ -13,7 +13,7 @@
             <div class="flex items-center justify-between mb-4 top-wrap">
                 <a href="{{ url_for('main') }}"><img src="/static/logo.png" alt="logo" class="w-16 h-16 logo"></a>
                 <a href="{{ url_for('mypage') }}" class="name-wrap">
-                    <h2 class="text-xl font-semibold"></h2>
+                    <h2 class="text-xl font-semibold">{{ username }}</h2>
                     <span class="text-sm font-semibold">님</span>
                 </a>
             </div>
@@ -35,7 +35,7 @@
         <div class="modal">
             <div class="modal_popup w-auto">
 
-
+                    <form id="questionForm">
                         <div class="mt-7 flex flex-col gap-2"></div>
                             <div class="input_section w-[320px] h-[304px] mb-9">
                                 <div class="question_section">
@@ -55,19 +55,17 @@
                                         class="submit_button w-full h-12 px-[14px] mb-16 text-white text-center rounded-md font-semibold">
                                     등록
                                 </button>
+                            </form>
 
 
                     <button 
                         id="close_btn"
                         type="button"
-                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center popup-close"><svg
-                            aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <span class="sr-only">Close popup</span>
+                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center popup-close">
+                        <svg aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="sr-only">Close popup</span>
                     </button>
 
             </div>
@@ -80,7 +78,8 @@
         </main>   
     </div>
     <script>
-        const answerData = [];
+        let answerData = [];
+        let userAnswers = [];
 
         function addAnswerCard() {
             const container = document.getElementById('answer-cards');
@@ -88,27 +87,60 @@
             answerData.forEach(data => {
                 const card = document.createElement('div');
                 card.className = 'answer-card';
-                card.innerHTML = `<div class="card">
-                    <div class="view-count">조회수: ${data.views}</div>
-                    <div class="card-content-wrap">
-                        <div class="question">${data.question}</div>
-                        <div class="input-wrap">
-                            <input type="text" placeholder="정답을 입력해주세요">
-                            <button>제출</button>
+                const userAnswer = userAnswers.find(answer => answer.question_id === data._id);
+                if (userAnswer) {
+                    card.innerHTML = `<div class="card">
+                        <div class="view-count">조회수: ${data.views}</div>
+                        <div class="card-content-wrap">
+                            <div class="question">${data.question}</div>
+                            <div class="input-wrap">
+                                <img src="/static/signiture.png" alt="Signiture">
+                                <div class="question">${userAnswer.answer}</div>
+                            </div>
                         </div>
-                    </div>
-                </div>`;
-                card.querySelector('button').addEventListener('click', (event) => {
-                    event.preventDefault();
-                    const userAnswer = card.querySelector('input').value;
-                    if (userAnswer === data.answer) {
-                        card.querySelector('.input-wrap').innerHTML = `<img src="/static/signiture.png" alt="Signiture"><div class="question">${data.answer}</div>`;
-                        window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&views=${data.views}&correct=true`;
-                    } else {
-                        card.querySelector('.input-wrap').innerHTML = `<img src="/static/wrong.png" alt="Wrong"><div class="question">틀렸습니다</div>`;
-                        window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&views=${data.views}&correct=false`;
-                    }
-                });
+                    </div>`;
+                } else {
+                    card.innerHTML = `<div class="card">
+                        <div class="view-count">조회수: ${data.views}</div>
+                        <div class="card-content-wrap">
+                            <div class="question">${data.question}</div>
+                            <div class="input-wrap">
+                                <input type="text" placeholder="정답을 입력해주세요">
+                                <button>제출</button>
+                            </div>
+                        </div>
+                    </div>`;
+                    card.querySelector('button').addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const userAnswer = card.querySelector('input').value;
+                        const questionId = data._id;
+                        fetch('/submit-answer', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                question_id: questionId,
+                                answer: userAnswer
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                if (userAnswer === data.answer) {
+                                    card.querySelector('.input-wrap').innerHTML = `<img src="/static/signiture.png" alt="Signiture"><div class="question">${data.answer}</div>`;
+                                    window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&views=${data.views}&correct=true`;
+                                } else {
+                                    card.querySelector('.input-wrap').innerHTML = `<img src="/static/wrong.png" alt="Wrong"><div class="question">틀렸습니다</div>`;
+                                    window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&views=${data.views}&correct=false`;
+                                }
+                            } else {
+                                console.error('Failed to submit answer');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                    });
+                }
                 container.appendChild(card);
             });
         }
@@ -118,10 +150,24 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        answerData.push(...data.questions);
-                        addAnswerCard();
+                        answerData = data.questions;
+                        fetchUserAnswers();
                     } else {
                         console.error('Failed to fetch questions');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function fetchUserAnswers() {
+            fetch('/get-user-answers')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        userAnswers = data.userAnswers;
+                        addAnswerCard();
+                    } else {
+                        console.error('Failed to fetch user answers');
                     }
                 })
                 .catch(error => console.error('Error:', error));

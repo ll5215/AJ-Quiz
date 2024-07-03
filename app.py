@@ -56,25 +56,25 @@ def login():
             if not username or not password:
                 return jsonify({'message': 'Username and password are required'}), 400
 
-            logging.info(f"Attempting login for username: {username}")  # 로그 추가
+            logging.info(f"Attempting login for username: {username}")
             user = db.users.find_one({'username': username})
             if not user:
-                logging.warning(f"Invalid username: {username}")  # 로그 추가
+                logging.warning(f"Invalid username: {username}")
                 return jsonify({'message': 'Invalid username'}), 401
             if not check_password_hash(user['password'], password):
-                logging.warning(f"Invalid password for username: {username}")  # 로그 추가
+                logging.warning(f"Invalid password for username: {username}")
                 return jsonify({'message': 'Invalid password'}), 401
             payload = {
                 'username': username,
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
             }
-            logging.info(f"Payload: {payload}")  # 로그 추가
+            logging.info(f"Payload: {payload}")
             token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
             resp = make_response(jsonify({'message': 'Login successful'}))
             resp.set_cookie('access_token', token, httponly=True)
             return resp
         except Exception as e:
-            logging.error(f"Login error: {e}")  # 로그 추가
+            logging.error(f"Login error: {e}")
             return jsonify({'message': f"Internal server error: {e}"}), 500
     return render_template('login.html')
 @app.route('/main')
@@ -115,6 +115,46 @@ def get_questions(current_user):
     for question in questions:
         question['_id'] = str(question['_id'])  # ObjectId를 문자열로 변환
     return jsonify({'success': True, 'questions': questions}), 200
+
+@app.route('/submit-answer', methods=['POST'])
+@token_required
+def submit_answer(current_user):
+    data = request.get_json()
+    question_id = data.get('question_id')
+    user_answer = data.get('answer')
+
+    if not question_id or not user_answer:
+        return jsonify({'success': False, 'message': 'Missing question ID or answer'}), 400
+
+    existing_answer = db.answers.find_one({
+        'question_id': ObjectId(question_id),
+        'user': current_user['username']
+    })
+
+    if existing_answer:
+        return jsonify({'success': False, 'message': 'Answer already submitted'}), 400
+
+    new_answer = {
+        'question_id': ObjectId(question_id),
+        'user': current_user['username'],
+        'answer': user_answer,
+        'likes': 0
+    }
+
+    db.answers.insert_one(new_answer)
+    new_answer['_id'] = str(new_answer['_id'])  # ObjectId를 문자열로 변환
+    new_answer['question_id'] = str(new_answer['question_id'])  # ObjectId를 문자열로 변환
+
+    return jsonify({'success': True, 'newAnswer': new_answer}), 200
+
+@app.route('/get-user-answers', methods=['GET'])
+@token_required
+def get_user_answers(current_user):
+    user_answers = list(db.answers.find({'user': current_user['username']}))
+    for answer in user_answers:
+        answer['_id'] = str(answer['_id'])  # ObjectId를 문자열로 변환
+        answer['question_id'] = str(answer['question_id'])  # ObjectId를 문자열로 변환
+    return jsonify({'success': True, 'userAnswers': user_answers}), 200
 
 
 if __name__ == '__main__':
