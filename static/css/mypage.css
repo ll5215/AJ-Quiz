@@ -180,7 +180,7 @@ h2{
 }
 
 /*모달 팝업 영역 스타일링*/
-.modal {
+.editmodal, .deletemodal {
 /*팝업 배경*/
     display: none; /*평소에는 보이지 않도록*/
     position: absolute;
@@ -191,7 +191,7 @@ h2{
     overflow: hidden;
     background: rgba(0,0,0,0.5);
 }
-.modal .modal_popup {
+.editmodal .modal_popup{
 /*팝업*/
     position: absolute;
     top: 50%;
@@ -203,7 +203,19 @@ h2{
     width: 377px;
     height: 390px;
 }
-.modal .modal_popup .close_btn {
+.deletemodal .modal_popup {
+    /*팝업*/
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 20px;
+        width: 377px;
+        height: 212px;
+    }
+.editmodal .modal_popup .close_btn, .deletemodal .modal_popup .close_btn {
     display: block;
     padding: 10px 20px;
     background-color: rgb(116, 0, 0);
@@ -213,15 +225,15 @@ h2{
     cursor: pointer;
     transition: box-shadow 0.2s;
 }
-.modal.on {
+.editmodal.on, .deletemodal.on {
     display: block;
 }
 
-#cancel_delete {
+#cancel_delete{
     background-color: #909090;
 }
 
-#confirm_delete {
+#confirm_delete, .edit_btn >  button  {
     background-color: #222222;
-    
+
 }
