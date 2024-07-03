@@ -193,14 +193,45 @@ def edit_questions():
     else:
         return jsonify({'result':'failure'})
 
-@app.route('/get-answers/<question_id>', methods=['GET'])
+@app.route('/get-question-answers/<question_id>', methods=['GET'])
 @token_required
-def get_answers(current_user, question_id):
+def get_question_answers(current_user, question_id):
     answers = list(db.answers.find({'question_id': ObjectId(question_id)}))
+    user_likes = list(db.likes.find({'user_id': current_user['_id']}))
+    liked_answers = [str(like['answer_id']) for like in user_likes]
+    
     for answer in answers:
         answer['_id'] = str(answer['_id'])  # ObjectId를 문자열로 변환
         answer['question_id'] = str(answer['question_id'])  # ObjectId를 문자열로 변환
+        answer['liked'] = answer['_id'] in liked_answers  # 사용자가 좋아요를 눌렀는지 여부
+    
     return jsonify({'success': True, 'answers': answers}), 200
+
+@app.route('/like-answer', methods=['POST'])
+@token_required
+def like_answer(current_user):
+    data = request.json
+    answer_id = data.get('answer_id')
+    
+    if answer_id:
+        db.answers.update_one({'_id': ObjectId(answer_id)}, {'$inc': {'likes': 1}})
+        db.likes.insert_one({'user_id': current_user['_id'], 'answer_id': ObjectId(answer_id)})
+        answer = db.answers.find_one({'_id': ObjectId(answer_id)})
+        return jsonify({"success": True, "likes": answer['likes']})
+    return jsonify({"success": False, "error": "Answer not found"}), 404
+
+@app.route('/unlike-answer', methods=['POST'])
+@token_required
+def unlike_answer(current_user):
+    data = request.json
+    answer_id = data.get('answer_id')
+    
+    if answer_id:
+        db.answers.update_one({'_id': ObjectId(answer_id)}, {'$inc': {'likes': -1}})
+        db.likes.delete_one({'user_id': current_user['_id'], 'answer_id': ObjectId(answer_id)})
+        answer = db.answers.find_one({'_id': ObjectId(answer_id)})
+        return jsonify({"success": True, "likes": answer['likes']})
+    return jsonify({"success": False, "error": "Answer not found"}), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)

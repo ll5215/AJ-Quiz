@@ -77,7 +77,7 @@ card css
 
 .card-wrap{
     background-color: #EEEEEE;
-    padding: 31px;
+    padding: 25px 20px 20px 20px;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
@@ -95,16 +95,10 @@ card css
     gap: 12px;
 }
 
-.card-content-question-wrap, .card-content-answer-wrap{
-    display: flex;
-    align-items: center;
-    gap: 19px;
-}
-
 .card-content-question, .card-content-answer{
     font-size: 20px;
     color : black;
-    width : 37px;
+    max-width : 300px;
 }
 
 .question, .answer{

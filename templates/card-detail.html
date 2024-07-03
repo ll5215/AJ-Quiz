@@ -31,7 +31,7 @@
         <div class="answer-wrap">
             <h3 class="text-lg font-semibold mb-4">다른 답변들</h3>
             <div class="answers-wrap">
-              <div id="other-answers" ></div>
+              <div id="other-answers"></div>
             </div>
         </div>
         <button class="fixed bottom-8 right-8 bg-gray-900 text-white text-lg p-4 rounded-full shadow-lg hover:bg-gray-700 focus:outline-none">
@@ -58,7 +58,7 @@
                 document.getElementById('result-image').src = '/static/wrong.png';
             }
 
-            fetch(`/get-answers/${questionId}`)
+            fetch(`/get-question-answers/${questionId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -66,17 +66,49 @@
                         data.answers.forEach(answer => {
                             const answerElement = document.createElement('div');
                             answerElement.className = 'bg-gray-100 p-4 rounded-lg mb-4';
+                            const heartIcon = answer.liked ? '/static/heart-filled.png' : '/static/heart-empty.png';
                             answerElement.innerHTML = `
                                 <p>${answer.answer}</p>
                                 <div class="flex justify-between items-center mt-2">
                                     <span class="text-gray-500 text-xs">작성자: ${answer.user}</span>
                                     <span class="flex items-center text-red-500">
-                                        <a href=""><img class="heart" src="/static/heart-empty.png" /></a>
-                                        <span class="ml-1">${answer.likes}</span>
+                                        <a href="javascript:void(0)" class="like-button" data-id="${answer._id}">
+                                            <img class="heart" src="${heartIcon}" />
+                                        </a>
+                                        <span class="ml-1 like-count">${answer.likes}</span>
                                     </span>
                                 </div>
                             `;
                             otherAnswersContainer.appendChild(answerElement);
+                        });
+
+                        // 이벤트 리스너 추가
+                        document.querySelectorAll('.like-button').forEach(button => {
+                            button.addEventListener('click', function() {
+                                const answerId = this.getAttribute('data-id');
+                                const likeCountElement = this.nextElementSibling;
+                                const heartImage = this.querySelector('.heart');
+                                const isLiked = heartImage.src.includes('heart-filled.png');
+                                
+                                const url = isLiked ? '/unlike-answer' : '/like-answer';
+                                fetch(url, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ answer_id: answerId })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        likeCountElement.textContent = data.likes;
+                                        heartImage.src = isLiked ? '/static/heart-empty.png' : '/static/heart-filled.png';
+                                    } else {
+                                        console.error('Failed to update likes');
+                                    }
+                                })
+                                .catch(error => console.error('Error:', error));
+                            });
                         });
                     } else {
                         console.error('Failed to fetch answers');
