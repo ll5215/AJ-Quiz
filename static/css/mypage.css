@@ -12,20 +12,12 @@ body{
 
 
 .mypage-container {
-    width: 430px;
+    
     display: flex;
     flex-direction: column;
-    margin: 20px 0px;
-    justify-content: center;
     align-items: center;
-}
-
-.mypage-wrap {
-    width: 430px; /* 고정된 너비를 설정합니다 */
-    padding: 0px 31px;
-    display: flex;
-    flex-direction: column;
-    gap: 36px;
+    width: 360px;
+    height: 193px;
 }
 
 .mypage-nav{
@@ -59,6 +51,8 @@ body{
     cursor: pointer;
     outline: none;
     border: none;
+
+
 }
 
 .btn-logout:hover{
@@ -77,7 +71,8 @@ card css
     display: flex;
     flex-direction: column;
     gap: 24px;
-    height: 844px;
+    width : 360px;
+    height : 193px;
 }
 
 .card-wrap{
@@ -107,11 +102,13 @@ card css
 }
 
 .card-content-question, .card-content-answer{
-    font-size: 16px;
+    font-size: 20px;
+    color : black;
+    width : 37px;
 }
 
 .question, .answer{
-    max-width: 310px;
+    width: 254px;
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -159,7 +156,8 @@ card css
     border: none;
     border-radius: 6px;
     outline: none;
-    padding: 15px 25px;
+    width: 76px;
+    height : 40px;
     cursor: pointer;
 }
 
