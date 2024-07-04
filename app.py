@@ -252,5 +252,11 @@ def unlike_answer(current_user):
         return jsonify({"success": True, "likes": answer['likes']})
     return jsonify({"success": False, "error": "Answer not found"}), 404
 
+@app.route('/update-views/<question_id>', methods=['POST'])
+@token_required
+def update_views(current_user, question_id):
+    db.questions.update_one({'_id': ObjectId(question_id)}, {'$inc': {'views': 1}})
+    return jsonify({'success': True}), 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

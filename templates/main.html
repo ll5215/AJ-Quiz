@@ -93,7 +93,7 @@
                             <div class="question">${data.question}</div>
                             <div class="input-wrap">
                                 <img src="/static/${correct ? 'signiture.png' : 'wrong.png'}" alt="${correct ? 'Signiture' : 'Wrong'}">
-                                <a href="/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&user_answer=${encodeURIComponent(userAnswer.answer)}&views=${data.views}&correct=${correct}&question_id=${data._id}">
+                                <a href="javascript:void(0)" data-question-id="${data._id}" class="view-detail-btn" data-question="${encodeURIComponent(data.question)}" data-answer="${encodeURIComponent(data.answer)}" data-user_answer="${encodeURIComponent(userAnswer.answer)}" data-views="${data.views}" data-correct="${correct}">
                                     <button>답변 확인하러가기</button></a>
                             </div>
                         </div>
@@ -113,30 +113,72 @@
                         event.preventDefault();
                         const userAnswer = card.querySelector('input').value;
                         const questionId = data._id;
-                        fetch('/submit-answer', {
+                        fetch(`/update-views/${questionId}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                question_id: questionId,
-                                answer: userAnswer
-                            })
+                            }
                         })
                         .then(response => response.json())
-                        .then(result => {
-                            if (result.success) {
-                                const correct = userAnswer === data.answer;
-                                card.querySelector('.input-wrap').innerHTML = `<img src="/static/${correct ? 'signiture.png' : 'wrong.png'}" alt="${correct ? 'Signiture' : 'Wrong'}"><div class="question">${data.answer}</div>`;
-                                window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&user_answer=${encodeURIComponent(userAnswer)}&views=${data.views}&correct=${correct}&question_id=${data._id}`;
+                        .then(updateData => {
+                            if (updateData.success) {
+                                fetch('/submit-answer', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        question_id: questionId,
+                                        answer: userAnswer
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(result => {
+                                    if (result.success) {
+                                        const correct = userAnswer === data.answer;
+                                        card.querySelector('.input-wrap').innerHTML = `<img src="/static/${correct ? 'signiture.png' : 'wrong.png'}" alt="${correct ? 'Signiture' : 'Wrong'}"><div class="question">${data.answer}</div>`;
+                                        window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&user_answer=${encodeURIComponent(userAnswer)}&views=${parseInt(data.views) + 1}&correct=${correct}&question_id=${data._id}`;
+                                    } else {
+                                        console.error('Failed to submit answer');
+                                    }
+                                })
+                                .catch(error => console.error('Error:', error));
                             } else {
-                                console.error('Failed to submit answer');
+                                console.error('Failed to update views');
                             }
                         })
                         .catch(error => console.error('Error:', error));
                     });
                 }
                 container.appendChild(card);
+            });
+
+            // 이벤트 리스너 추가
+            document.querySelectorAll('.view-detail-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const questionId = this.getAttribute('data-question-id');
+                    const question = this.getAttribute('data-question');
+                    const answer = this.getAttribute('data-answer');
+                    const userAnswer = this.getAttribute('data-user_answer');
+                    const views = this.getAttribute('data-views');
+                    const correct = this.getAttribute('data-correct') === 'true';
+
+                    fetch(`/update-views/${questionId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = `/card-detail?question=${question}&answer=${answer}&user_answer=${userAnswer}&views=${parseInt(views) + 1}&correct=${correct}&question_id=${questionId}`;
+                        } else {
+                            console.error('Failed to update views');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
             });
         }
 
