@@ -44,10 +44,14 @@ def card_detail(current_user):
     question = request.args.get('question')
     answer = request.args.get('answer')
     user_answer = request.args.get('user_answer')
-    views = request.args.get('views')
     correct = request.args.get('correct') == 'true'
     question_id = request.args.get('question_id')
-    return render_template('card-detail.html', username=current_user['username'], question=question, answer=answer, user_answer=user_answer, views=views, correct=correct, question_id=question_id)
+    
+    # 조회수 증가
+    db.questions.update_one({'_id': ObjectId(question_id)}, {'$inc': {'views': 1}})
+    updated_views = db.questions.find_one({'_id': ObjectId(question_id)})['views']
+    
+    return render_template('card-detail.html', username=current_user['username'], question=question, answer=answer, user_answer=user_answer, views=updated_views, correct=correct, question_id=question_id)
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -92,7 +96,7 @@ def login():
                 return jsonify({'message': 'Invalid password'}), 401
             payload = {
                 'username': username,
-                'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1)
             }
             logging.info(f"Payload: {payload}")
             token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
@@ -103,7 +107,7 @@ def login():
             logging.error(f"Login error: {e}")
             return jsonify({'message': f"Internal server error: {e}"}), 500
     return render_template('login.html')
-    
+
 @app.route('/logout')
 def logout():
     resp = make_response(redirect(url_for('login')))
@@ -174,7 +178,11 @@ def submit_answer(current_user):
     new_answer['_id'] = str(new_answer['_id'])  # ObjectId를 문자열로 변환
     new_answer['question_id'] = str(new_answer['question_id'])  # ObjectId를 문자열로 변환
 
-    return jsonify({'success': True, 'newAnswer': new_answer}), 200
+    db.questions.update_one({'_id': ObjectId(question_id)}, {'$inc': {'views': 1}})
+
+    updated_views = db.questions.find_one({'_id': ObjectId(question_id)})['views']
+
+    return jsonify({'success': True, 'newAnswer': new_answer, 'views': updated_views}), 200
 
 @app.route('/get-user-answers', methods=['GET'])
 @token_required
@@ -252,11 +260,5 @@ def unlike_answer(current_user):
         return jsonify({"success": True, "likes": answer['likes']})
     return jsonify({"success": False, "error": "Answer not found"}), 404
 
-@app.route('/update-views/<question_id>', methods=['POST'])
-@token_required
-def update_views(current_user, question_id):
-    db.questions.update_one({'_id': ObjectId(question_id)}, {'$inc': {'views': 1}})
-    return jsonify({'success': True}), 200
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True, port=3000)
