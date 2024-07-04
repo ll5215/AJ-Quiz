@@ -142,7 +142,7 @@ def add_question(current_user):
 @app.route('/get-questions', methods=['GET'])
 @token_required
 def get_questions(current_user):
-    questions = list(db.questions.find())  # 모든 질문을 가져옴
+    questions = list(db.questions.find().sort('views', -1))  # 조회수로 내림차순 정렬
     for question in questions:
         question['_id'] = str(question['_id'])  # ObjectId를 문자열로 변환
     return jsonify({'success': True, 'questions': questions}), 200
