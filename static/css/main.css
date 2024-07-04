@@ -80,7 +80,7 @@ body {
     padding: 10px 20px;
     font-size: 16px;
     border: none;
-    background-color: #909090;
+    background-color: #222;
     color: white;
     border-radius: 5px;
     transition: background-color 0.2s ease, transform 0.2s ease;
@@ -90,7 +90,7 @@ body {
     position: fixed;
     bottom: 16px;
     right: calc(50% - 160px);
-    background-color: #333;
+    background-color: #222;
     color: white;
     border: none;
     border-radius: 50%;
@@ -220,5 +220,25 @@ h2{
 }
 
 .submit_button {
-    background-color: #909090;
+    background-color: #222;
 }
+
+.answer_section input{
+    outline: none;
+}
+
+.question_section input{
+    outline: none;
+}
+
+.answer_section input:focus{
+    border: none;
+    outline: none;
+}
+
+.question_section input:focus{
+    border: none;
+    outline: none;
+}
+
+
