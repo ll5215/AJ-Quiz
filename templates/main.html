@@ -60,7 +60,7 @@
                     <svg aria-hidden="true" class="w-5 h-5" fill="#c6c7c7" viewBox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
                             clip-rule="evenodd"></path>
                     </svg>
                     <span class="sr-only">Close popup</span>
@@ -93,7 +93,7 @@
                             <div class="question">${data.question}</div>
                             <div class="input-wrap">
                                 <img src="/static/${correct ? 'signiture.png' : 'wrong.png'}" alt="${correct ? 'Signiture' : 'Wrong'}">
-                                <a href="/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&user_answer=${encodeURIComponent(userAnswer.answer)}&views=${data.views}&correct=${correct}&question_id=${data._id}">
+                                <a href="javascript:void(0)" class="view-detail-btn" data-question="${encodeURIComponent(data.question)}" data-answer="${encodeURIComponent(data.answer)}" data-user_answer="${encodeURIComponent(userAnswer.answer)}" data-views="${data.views}" data-correct="${correct}" data-question_id="${data._id}">
                                     <button>답변 확인하러가기</button></a>
                             </div>
                         </div>
@@ -128,6 +128,7 @@
                             if (result.success) {
                                 const correct = userAnswer === data.answer;
                                 card.querySelector('.input-wrap').innerHTML = `<img src="/static/${correct ? 'signiture.png' : 'wrong.png'}" alt="${correct ? 'Signiture' : 'Wrong'}"><div class="question">${data.answer}</div>`;
+                                updateViewsInStorage(questionId, result.views);
                                 window.location.href = `/card-detail?question=${encodeURIComponent(data.question)}&answer=${encodeURIComponent(data.answer)}&user_answer=${encodeURIComponent(userAnswer)}&views=${result.views}&correct=${correct}&question_id=${data._id}`;
                             } else {
                                 console.error('Failed to submit answer');
@@ -138,6 +139,46 @@
                 }
                 container.appendChild(card);
             });
+
+            document.querySelectorAll('.view-detail-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const questionId = this.getAttribute('data-question_id');
+                    const question = this.getAttribute('data-question');
+                    const answer = this.getAttribute('data-answer');
+                    const userAnswer = this.getAttribute('data-user_answer');
+                    const views = this.getAttribute('data-views');
+                    const correct = this.getAttribute('data-correct');
+
+                    fetch('/update-views', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ question_id: questionId })
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            updateViewsInStorage(questionId, result.views);
+                            window.location.href = `/card-detail?question=${question}&answer=${answer}&user_answer=${userAnswer}&views=${result.views}&correct=${correct}&question_id=${questionId}`;
+                        } else {
+                            console.error('Failed to update views');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        }
+
+        function updateViewsInStorage(questionId, views) {
+            const storedViews = JSON.parse(localStorage.getItem('views')) || {};
+            storedViews[questionId] = views;
+            localStorage.setItem('views', JSON.stringify(storedViews));
+        }
+
+        function getViewsFromStorage(questionId) {
+            const storedViews = JSON.parse(localStorage.getItem('views')) || {};
+            return storedViews[questionId] || 0;
         }
 
         function fetchQuestions() {
@@ -146,6 +187,12 @@
                 .then(data => {
                     if (data.success) {
                         answerData = data.questions;
+                        answerData.forEach(question => {
+                            const storedViews = getViewsFromStorage(question._id);
+                            if (storedViews) {
+                                question.views = storedViews;
+                            }
+                        });
                         fetchUserAnswers();
                     } else {
                         console.error('Failed to fetch questions');
@@ -208,6 +255,11 @@
                     }
                 })
                 .catch(error => console.error('Error:', error));
+            });
+
+            // 뒤로가기 버튼 클릭 시 페이지 새로고침
+            window.addEventListener('popstate', function(event) {
+                fetchQuestions();
             });
         });
     </script>

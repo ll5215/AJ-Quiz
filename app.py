@@ -47,8 +47,6 @@ def card_detail(current_user):
     correct = request.args.get('correct') == 'true'
     question_id = request.args.get('question_id')
     
-    # 조회수 증가
-    db.questions.update_one({'_id': ObjectId(question_id)}, {'$inc': {'views': 1}})
     updated_views = db.questions.find_one({'_id': ObjectId(question_id)})['views']
     
     return render_template('card-detail.html', username=current_user['username'], question=question, answer=answer, user_answer=user_answer, views=updated_views, correct=correct, question_id=question_id)
@@ -178,11 +176,23 @@ def submit_answer(current_user):
     new_answer['_id'] = str(new_answer['_id'])  # ObjectId를 문자열로 변환
     new_answer['question_id'] = str(new_answer['question_id'])  # ObjectId를 문자열로 변환
 
+    # 조회수 증가
     db.questions.update_one({'_id': ObjectId(question_id)}, {'$inc': {'views': 1}})
-
     updated_views = db.questions.find_one({'_id': ObjectId(question_id)})['views']
 
     return jsonify({'success': True, 'newAnswer': new_answer, 'views': updated_views}), 200
+
+@app.route('/update-views', methods=['POST'])
+@token_required
+def update_views(current_user):
+    data = request.get_json()
+    question_id = data.get('question_id')
+    
+    # 조회수 증가
+    db.questions.update_one({'_id': ObjectId(question_id)}, {'$inc': {'views': 1}})
+    updated_views = db.questions.find_one({'_id': ObjectId(question_id)})['views']
+
+    return jsonify({'success': True, 'views': updated_views}), 200
 
 @app.route('/get-user-answers', methods=['GET'])
 @token_required

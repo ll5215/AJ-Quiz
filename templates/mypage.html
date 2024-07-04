@@ -114,10 +114,9 @@
                     <div class="card-bottom">
                         <div class="card-bottom-info">
                             <div class="info-views">
-                            <span>조회수:</span>
-                            <span>320</span>
+                                <span>조회수:</span>
+                                <span class="views-count">320</span>
                             </div>
-
                         </div>
                         <div class="card-bottom-btn">
                             <button class="edit">수정</button>
@@ -130,6 +129,17 @@
     </div>
 
     <script>
+        function updateViewsInStorage(questionId, views) {
+            const storedViews = JSON.parse(localStorage.getItem('views')) || {};
+            storedViews[questionId] = views;
+            localStorage.setItem('views', JSON.stringify(storedViews));
+        }
+
+        function getViewsFromStorage(questionId) {
+            const storedViews = JSON.parse(localStorage.getItem('views')) || {};
+            return storedViews[questionId] || 0;
+        }
+
         $(document).ready(function() {
             // 수정 모달
             const editModal = $('.editmodal');
@@ -144,8 +154,6 @@
             // 로그아웃 버튼
             const logoutButton = $('.btn-logout');
 
-
-    
             // 로그아웃 버튼 클릭 시 로그아웃 처리
             logoutButton.on('click', function() {
                 $.ajax({
@@ -160,9 +168,9 @@
                 });
             });
             
-            //열기 버튼을 눌렀을 때 수정 모달팝업이 열림
+            // 열기 버튼을 눌렀을 때 수정 모달팝업이 열림
             editModalOpen.on('click', function() {
-                //'on' class 추가
+                // 'on' class 추가
                 editModal.addClass('on');
     
                 // 모달 입력 필드에 기존 값 설정하기
@@ -173,47 +181,52 @@
                 $('#edit_answer').val(editAnswer);
             });
             
-            //닫기 버튼을 눌렀을 때 수정 모달팝업이 닫힘
+            // 닫기 버튼을 눌렀을 때 수정 모달팝업이 닫힘
             editModalClose.on('click', function() {
-                //'on' class 제거
+                // 'on' class 제거
                 editModal.removeClass('on');
             });
             
-            //열기 버튼을 눌렀을 때 삭제 모달팝업이 열림
+            // 열기 버튼을 눌렀을 때 삭제 모달팝업이 열림
             deleteModalOpen.on('click', function() {
-                //'on' class 추가
+                // 'on' class 추가
                 deleteModal.addClass('on');
             });
             
-            //닫기 버튼을 눌렀을 때 삭제 모달팝업이 닫힘
+            // 닫기 버튼을 눌렀을 때 삭제 모달팝업이 닫힘
             deleteModalClose.on('click', function() {
-                //'on' class 제거
+                // 'on' class 제거
                 deleteModal.removeClass('on');
             });
+
+            // 조회수를 로컬 스토리지에서 가져와서 업데이트
+            $('.card-wrap').each(function() {
+                const questionId = $(this).find('.question').data('question-id');
+                const views = getViewsFromStorage(questionId);
+                if (views) {
+                    $(this).find('.views-count').text(views);
+                }
+            });
         });
-    
     
         // 모달 내에서 수정 버튼을 눌렀을 때
         function editCard(count){
             let question = $("#edit_question").val();
             let answer = $("#edit_answer").val();
-            
     
             $.ajax({
-                    type: "POST",
-                    url: "/edit/questions",
-                    data: {question_give:question, answer_give:answer, count_give:count},
-                    success: function (response) {
-                        if (response['result'] == 'success') {
-                            alert('수정 완료!')
-                            console.log(response['result'])
-                        } else {
-                            alert('카드 수정에 실패했습니다.')
-                        }
-                        
+                type: "POST",
+                url: "/edit/questions",
+                data: {question_give:question, answer_give:answer, count_give:count},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert('수정 완료!')
+                        console.log(response['result'])
+                    } else {
+                        alert('카드 수정에 실패했습니다.')
                     }
-                });
-    
+                }
+            });
     
             let temp_html = `<div class="card-wrap">
                     <div class="card-content-wrap">
@@ -229,8 +242,8 @@
                     <div class="card-bottom">
                         <div class="card-bottom-info">
                             <div class="info-views">
-                            <span>조회수:</span>
-                            <span>320</span>
+                                <span>조회수:</span>
+                                <span class="views-count">320</span>
                             </div>
                             <div class="info-hearts">
                                 <img class="heart" src="/static/heart-filled.png" />
@@ -244,29 +257,25 @@
                     </div>
                 </div>`
     
-            
             $(".card-container").append(temp_html);
         }
     
         // 삭제 버튼을 눌렀을 때
         function deleteCard(){ 
             $.ajax({
-                    type: "POST",
-                    url: "/delete/questions",
-                    data: {question_give : question},
-                    success: function (response) {
-                        if (response['result'] == 'success') {
-                            alert('삭제 완료!')
-                            console.log(response['result'])
-                        } else {
-                            alert('카드 삭제에 실패했습니다.')
-                            }
-                        }
+                type: "POST",
+                url: "/delete/questions",
+                data: {question_give : question},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert('삭제 완료!')
+                        console.log(response['result'])
+                    } else {
+                        alert('카드 삭제에 실패했습니다.')
                     }
-                );
-    
+                }
+            });
         }
     </script>
-    
 </body>
 </html>
