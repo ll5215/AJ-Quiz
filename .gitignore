@@ -109,3 +109,6 @@ env/
 
 # VS Code
 .vscode/
+
+# config.py 파일을 무시
+config.py
