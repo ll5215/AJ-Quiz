@@ -6,47 +6,36 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/mypage.css">
+    <style>
+        .modal.on {
+            display: flex;
+        }
+    </style>
 </head>
 <body>
     <div class="mypage-containermt-5 mt-5">
         <div class="mypage-wrap">
             <!-- 삭제 모달 -->
-            <div class="deletemodal">
-                <div class="modal_popup">
-                    <div class="modal_container w-[333px] h-[337px] flex flex-col items-center justify-center">
-                        <div class="p-5">
-                            <div class="mt-7 flex flex-col gap-2"></div>
-                                <form class="w-full">
-                                    <div>
-                                        <div class="input_section w-[320px] mb-9">
-                                            <div class="delete_inform">
-                                                <label id="delete_message" class="block w-[320px] grid place-items-center rounded-lg px-3 py-1 outline-none text-black text-xl">
-                                                    질문을 삭제하시겠습니까?
-                                                </label>                                            
-                                            </div>
-                                        </div>
-                                        <div class="submit_btn flex gap-4">
-                                            <button id="cancel_delete"
-                                                    type="submit"
-                                                    class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
-                                                취소
-                                            </button>
-                                            <button id="confirm_delete"
-                                                    onclick="deleteCard()"
-                                                    type="submit"
-                                                    class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
-                                                삭제
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+            <div class="deletemodal hidden fixed inset-0 bg-gray-800 bg-opacity-75 items-center justify-center z-50">
+                <div class="modal_popup rounded-lg w-auto bg-white p-5 relative">
+                    <div class="flex flex-col mb-11">
+                        <label class="flex justify-center font-bold">질문 삭제</label>
+                    </div>
+                    <div class="w-[350px] h-[200px] flex flex-col items-center justify-center">
+                        <p class="mb-4">질문을 삭제하시겠습니까?</p>
+                        <div class="submit_btn flex gap-4">
+                            <button id="cancel_delete" type="button" class="inline-flex w-24 items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white bg-gray-500">
+                                취소
+                            </button>
+                            <button id="confirm_delete" type="button" class="inline-flex w-24 items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white bg-red-500">
+                                삭제
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>    
             <!-- 수정 모달 -->
-            <div class="editmodal">
+            <div class="editmodal hidden">
                 <div class="modal_popup">
                     <div class="modal_container w-[333px] h-[337px]">
                         <div class="p-5">
@@ -56,7 +45,7 @@
                                     <div class="edit_section">
                                         <label for="edit">질문 수정</label>
                                         <input id="edit_question" name="edit_question" type="text" required=""
-                                        class="block w-[320px] w-full text-sm rounded-lg border border-black px-3 py-10 pb-3 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
+                                        class="mt-2 block w-[320px] w-full text-sm rounded-lg border border-black px-3 py-10 shadow-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-black focus:ring-offset-1"
                                         placeholder="" value="">
                                     </div>
                                     <div class="answer_section">
@@ -68,8 +57,8 @@
                                 </div>
                                 <p class="mb-3 mt-2 text-sm text-gray-500"></p>
                                 <div class="edit_btn">
-                                    <button type="submit"
-                                            onclick="editCard('${count}')"
+                                    <button type="button"
+                                            id="save_edit"
                                             class="inline-flex w-full items-center justify-center rounded-lg p-2 py-3 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:bg-gray-400">
                                         수정
                                     </button>
@@ -100,22 +89,23 @@
                 <button class="btn-logout"><img class="btn-logout-icn" src="/static/logout.png" /></button>
             </div>
             <div class="card-container">
-                <div class="card-wrap mt-4">
-                    <div class="card-content-wrap">
-                        <div class="card-content-question-wrap">
-                            <span class="card-content-question">질문 </span>
-                            <div class="question">아아몬몬드드가가 죽죽으으면면?</div>
+                {% for question in questions %}
+                <div class="card-wrap mt-4" data-id="{{ question['_id'] }}">
+                    <div class="card-content-wrap w-full">
+                        <div class="card-content-question-wrap flex flex-row justify-between">
+                            <span class="card-content-question">질문</span>
+                            <div class="question">{{ question['question'] }}</div>
                         </div>
                         <div class="card-content-answer-wrap flex flex-row">
                             <span class="card-content-answer">정답</span>
-                            <div class="answer">다이아몬드</div>
+                            <div class="answer">{{ question['answer'] }}</div>
                         </div>
                     </div>
                     <div class="card-bottom">
                         <div class="card-bottom-info">
                             <div class="info-views">
-                                <span>조회수:</span>
-                                <span class="views-count">320</span>
+                            <span>조회수:</span>
+                            <span>{{ question['views'] }}</span>
                             </div>
                         </div>
                         <div class="card-bottom-btn">
@@ -124,22 +114,12 @@
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 
     <script>
-        function updateViewsInStorage(questionId, views) {
-            const storedViews = JSON.parse(localStorage.getItem('views')) || {};
-            storedViews[questionId] = views;
-            localStorage.setItem('views', JSON.stringify(storedViews));
-        }
-
-        function getViewsFromStorage(questionId) {
-            const storedViews = JSON.parse(localStorage.getItem('views')) || {};
-            return storedViews[questionId] || 0;
-        }
-
         $(document).ready(function() {
             // 수정 모달
             const editModal = $('.editmodal');
@@ -153,7 +133,7 @@
     
             // 로그아웃 버튼
             const logoutButton = $('.btn-logout');
-
+    
             // 로그아웃 버튼 클릭 시 로그아웃 처리
             logoutButton.on('click', function() {
                 $.ajax({
@@ -168,114 +148,90 @@
                 });
             });
             
-            // 열기 버튼을 눌렀을 때 수정 모달팝업이 열림
+            // 수정 모달 열기
             editModalOpen.on('click', function() {
-                // 'on' class 추가
-                editModal.addClass('on');
+                editModal.removeClass('hidden').addClass('on');
     
                 // 모달 입력 필드에 기존 값 설정하기
-                const editQuestion = $('.question').text(); // 카드에서 질문 텍스트 가져오기
-                const editAnswer = $('.answer').text(); // 카드에서 답변 텍스트 가져오기
+                const cardWrap = $(this).closest('.card-wrap');
+                const editQuestion = cardWrap.find('.question').text();
+                const editAnswer = cardWrap.find('.answer').text();
     
                 $('#edit_question').val(editQuestion);
                 $('#edit_answer').val(editAnswer);
+                $('#save_edit').data('id', cardWrap.data('id'));
             });
-            
-            // 닫기 버튼을 눌렀을 때 수정 모달팝업이 닫힘
+    
+            // 수정 모달 닫기
             editModalClose.on('click', function() {
-                // 'on' class 제거
-                editModal.removeClass('on');
+                editModal.addClass('hidden').removeClass('on');
             });
             
-            // 열기 버튼을 눌렀을 때 삭제 모달팝업이 열림
+            // 삭제 모달 열기
             deleteModalOpen.on('click', function() {
-                // 'on' class 추가
-                deleteModal.addClass('on');
+                deleteModal.removeClass('hidden').addClass('on');
+    
+                // 삭제할 질문 설정
+                const cardWrap = $(this).closest('.card-wrap');
+                const questionId = cardWrap.data('id');
+                $('#confirm_delete').data('id', questionId);
             });
             
-            // 닫기 버튼을 눌렀을 때 삭제 모달팝업이 닫힘
+            // 삭제 모달 닫기
             deleteModalClose.on('click', function() {
-                // 'on' class 제거
-                deleteModal.removeClass('on');
+                deleteModal.addClass('hidden').removeClass('on');
             });
-
-            // 조회수를 로컬 스토리지에서 가져와서 업데이트
-            $('.card-wrap').each(function() {
-                const questionId = $(this).find('.question').data('question-id');
-                const views = getViewsFromStorage(questionId);
-                if (views) {
-                    $(this).find('.views-count').text(views);
-                }
+    
+            // 수정 저장
+            $('#save_edit').on('click', function() {
+                const questionId = $(this).data('id');
+                const newQuestion = $('#edit_question').val();
+                const newAnswer = $('#edit_answer').val();
+    
+                $.ajax({
+                    type: "POST",
+                    url: "/edit/questions",
+                    data: JSON.stringify({ question_id: questionId, question: newQuestion, answer: newAnswer }),
+                    contentType: "application/json",
+                    success: function(response) {
+                        if (response.result === 'success') {
+                            alert('수정을 완료하였습니다.');
+                            $(`.card-wrap[data-id='${questionId}'] .question`).text(newQuestion);
+                            $(`.card-wrap[data-id='${questionId}'] .answer`).text(newAnswer);
+                            editModal.addClass('hidden').removeClass('on');
+                        } else {
+                            alert('카드 수정에 실패했습니다.');
+                        }
+                    },
+                    error: function() {
+                        alert('카드 수정에 실패했습니다.');
+                    }
+                });
+            });
+    
+            // 삭제 확인
+            $('#confirm_delete').on('click', function() {
+                const questionId = $(this).data('id');
+                $.ajax({
+                    type: "POST",
+                    url: "/delete/questions",
+                    data: JSON.stringify({ question_id: questionId }),
+                    contentType: "application/json",
+                    success: function(response) {
+                        if (response.result === 'success') {
+                            alert('질문이 삭제되었습니다.');
+                            $(`.card-wrap[data-id='${questionId}']`).remove();
+                            deleteModal.addClass('hidden').removeClass('on');
+                        } else {
+                            alert('카드 삭제에 실패했습니다.');
+                        }
+                    },
+                    error: function() {
+                        alert('카드 삭제에 실패했습니다.');
+                    }
+                });
             });
         });
-    
-        // 모달 내에서 수정 버튼을 눌렀을 때
-        function editCard(count){
-            let question = $("#edit_question").val();
-            let answer = $("#edit_answer").val();
-    
-            $.ajax({
-                type: "POST",
-                url: "/edit/questions",
-                data: {question_give:question, answer_give:answer, count_give:count},
-                success: function (response) {
-                    if (response['result'] == 'success') {
-                        alert('수정 완료!')
-                        console.log(response['result'])
-                    } else {
-                        alert('카드 수정에 실패했습니다.')
-                    }
-                }
-            });
-    
-            let temp_html = `<div class="card-wrap">
-                    <div class="card-content-wrap">
-                        <div class="card-content-question-wrap">
-                            <span class="card-content-question">질문 </span>
-                            <div class="question">${question}</div>
-                        </div>
-                        <div class="card-content-answer-wrap">
-                            <span class="card-content-answer">정답</span>
-                            <div class="answer">${answer}</div>
-                        </div>
-                    </div>
-                    <div class="card-bottom">
-                        <div class="card-bottom-info">
-                            <div class="info-views">
-                                <span>조회수:</span>
-                                <span class="views-count">320</span>
-                            </div>
-                            <div class="info-hearts">
-                                <img class="heart" src="/static/heart-filled.png" />
-                                <span>10</span>
-                            </div>
-                        </div>
-                        <div class="card-bottom-btn">
-                            <button class="edit">수정</button>
-                            <button class="delete">삭제</button>
-                        </div>
-                    </div>
-                </div>`
-    
-            $(".card-container").append(temp_html);
-        }
-    
-        // 삭제 버튼을 눌렀을 때
-        function deleteCard(){ 
-            $.ajax({
-                type: "POST",
-                url: "/delete/questions",
-                data: {question_give : question},
-                success: function (response) {
-                    if (response['result'] == 'success') {
-                        alert('삭제 완료!')
-                        console.log(response['result'])
-                    } else {
-                        alert('카드 삭제에 실패했습니다.')
-                    }
-                }
-            });
-        }
     </script>
 </body>
 </html>
