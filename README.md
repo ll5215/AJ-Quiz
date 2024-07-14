@@ -21,7 +21,8 @@
 
 ## 4. 시연 영상
 
-<img width="1186" alt="image" src="https://github.com/user-attachments/assets/8ddd9a2f-f3fa-4a21-99d8-88be32e39238">
+
+<img width="80%" src="https://github.com/user-attachments/assets/eef66dd3-a527-43f7-8c44-63ce25e93baf"/>
 
 
 
